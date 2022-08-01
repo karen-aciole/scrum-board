@@ -32,20 +32,31 @@ public class UsuarioController {
 		
 		String username = this.usuarioService.criaUsuario(usuarioDTO);
 		
-		return new ResponseEntity<String>("Usuário cadastrado com username: " + username, HttpStatus.CREATED);
+		return new ResponseEntity<String>("Usuário cadastrado com username '" + username + "'", HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET)
 	public ResponseEntity<?> acessaInfoUsuario(@PathVariable String username, @RequestParam String senha) {
 		
 		if (!(this.usuarioService.contemUsername(username))) {
-			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username incorreto", HttpStatus.CONFLICT);
+			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 		
 		String info = this.usuarioService.getInfoUsuario(username, senha);
 		
-		return new ResponseEntity<String>(info, HttpStatus.OK);
+		return new ResponseEntity<String>(info, HttpStatus.OK);		
+	}
+	
+	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.PUT)
+	public ResponseEntity<?> atualizaInfoUsuario(@RequestBody UsuarioDTO usuarioDTO, UriComponentsBuilder ucBuilder) {
 		
+		if (!(this.usuarioService.contemUsername(usuarioDTO.getUsername()))) {
+			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		}
+		
+		String info = this.usuarioService.updateInfoUsuario(usuarioDTO);
+		
+		return new ResponseEntity<String>(info, HttpStatus.OK);
 	}
 
 }

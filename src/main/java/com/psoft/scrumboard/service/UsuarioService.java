@@ -15,9 +15,9 @@ public class UsuarioService {
 	
 	public String criaUsuario(UsuarioDTO usuarioDTO) {
 		Usuario usuario = new Usuario(usuarioDTO.getNomeCompleto(),
-									  usuarioDTO.getUsername(),
-									  usuarioDTO.getEmail(),
-									  usuarioDTO.getSenha());
+				                      usuarioDTO.getUsername(),
+				                      usuarioDTO.getEmail(),
+				                      usuarioDTO.getSenha());
 		
 		this.usuarioRepository.addUser(usuario);
 		
@@ -35,6 +35,24 @@ public class UsuarioService {
 			return "Senha incorreta";
 		} else {
 			return usuario.toString();
+		}
+		
+	}
+	
+	public String updateInfoUsuario(UsuarioDTO usuarioDTO) {
+		Usuario usuario = this.usuarioRepository.getUser(usuarioDTO.getUsername());
+		
+		if (!(usuario.getSenha().equals(usuarioDTO.getSenha()))) {
+			return "Senha incorreta";
+		} else {
+			usuario = new Usuario(usuarioDTO.getNomeCompleto(),
+                                  usuarioDTO.getUsername(),
+                                  usuarioDTO.getEmail(),
+                                  usuarioDTO.getSenha());
+			
+			this.usuarioRepository.addUser(usuario);
+			
+			return "Usuário atualizado com username '" + usuario.getUsername() + "'";
 		}
 		
 	}
