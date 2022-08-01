@@ -32,5 +32,14 @@ public class Usuario {
 	public String getSenha() {
 		return this.senha;
 	}
+	
+	public String toString() {
+		
+		String userInfo = "Informações do usuário com username '" + this.username + "'\n"
+				+ "Nome completo: " + this.nomeCompleto + "\n"
+				+ "E-mail: " + this.email;
+		
+		return userInfo;
+	}
 
 }
