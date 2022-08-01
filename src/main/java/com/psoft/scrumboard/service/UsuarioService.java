@@ -27,5 +27,16 @@ public class UsuarioService {
 	public boolean contemUsername(String username) {
 		return this.usuarioRepository.containsUsername(username);
 	}
+	
+	public String getInfoUsuario(String username, String senha) {
+		Usuario usuario = this.usuarioRepository.getUser(username);
+		
+		if (!(usuario.getSenha().equals(senha))) {
+			return "Senha incorreta";
+		} else {
+			return usuario.toString();
+		}
+		
+	}
 
 }

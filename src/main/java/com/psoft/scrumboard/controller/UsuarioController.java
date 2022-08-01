@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -31,6 +33,19 @@ public class UsuarioController {
 		String username = this.usuarioService.criaUsuario(usuarioDTO);
 		
 		return new ResponseEntity<String>("Usuário cadastrado com username: " + username, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET)
+	public ResponseEntity<?> acessaInfoUsuario(@PathVariable String username, @RequestParam String senha) {
+		
+		if (!(this.usuarioService.contemUsername(username))) {
+			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username incorreto", HttpStatus.CONFLICT);
+		}
+		
+		String info = this.usuarioService.getInfoUsuario(username, senha);
+		
+		return new ResponseEntity<String>(info, HttpStatus.OK);
+		
 	}
 
 }

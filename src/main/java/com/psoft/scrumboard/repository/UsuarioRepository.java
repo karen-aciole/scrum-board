@@ -23,5 +23,9 @@ public class UsuarioRepository {
 	public boolean containsUsername(String username) {
 		return this.usuarios.containsKey(username);
 	}
+	
+	public Usuario getUser(String username) {
+		return this.usuarios.get(username);
+	}
 
 }
