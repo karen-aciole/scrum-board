@@ -27,5 +27,9 @@ public class UsuarioRepository {
 	public Usuario getUser(String username) {
 		return this.usuarios.get(username);
 	}
+	
+	public void delUser(String username) {
+		this.usuarios.remove(username);
+	}
 
 }

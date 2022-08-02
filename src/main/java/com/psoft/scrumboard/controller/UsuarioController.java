@@ -58,5 +58,17 @@ public class UsuarioController {
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> removeUsuario(@PathVariable String username, @RequestParam String senha) {
+		
+		if (!(this.usuarioService.contemUsername(username))) {
+			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		}
+		
+		String info = this.usuarioService.deletaUsuario(username, senha);
+		
+		return new ResponseEntity<String>(info, HttpStatus.OK);		
+	}
 
 }

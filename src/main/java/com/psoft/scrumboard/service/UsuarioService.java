@@ -56,5 +56,16 @@ public class UsuarioService {
 		}
 		
 	}
+	
+	public String deletaUsuario(String username, String  senha) {
+		Usuario usuario = this.usuarioRepository.getUser(username);
+		
+		if (!(usuario.getSenha().equals(senha))) {
+			return "Senha incorreta";
+		} else {
+			this.usuarioRepository.delUser(username);
+			return "Usuário removido com username '" + usuario.getUsername() + "'";
+		}
+	}
 
 }
