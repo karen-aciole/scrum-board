@@ -10,7 +10,7 @@ public class UserStory {
     public UserStory(String titulo, String descricao, EstagioDeDesenvolvimento estagioDeDesenvolvimento) {
         this.titulo = titulo;
         this.descricao = descricao;
-        this.estagioDeDesenvolvimento = estagioDeDesenvolvimento; // alterar para ToDo quando implementada
+        this.estagioDeDesenvolvimento = estagioDeDesenvolvimento; // o estágio é TODO por default
     }
 
     public String getTitulo() {
@@ -34,8 +34,9 @@ public class UserStory {
     }
 
     public String toString() {
-        return "Título: " + this.titulo + "\n"
-                + "Descrição: " + this.descricao;
+        return "Informações da UserStory '" + this.titulo + "'\n"
+                + "Descrição: " + this.descricao + "\n"
+                + "Estágio de desenvolvimento: " + this.estagioDeDesenvolvimento;
     }
 
 }
