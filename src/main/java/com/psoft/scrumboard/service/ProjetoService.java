@@ -22,7 +22,7 @@ public class ProjetoService {
         return projeto.getNome();
     }
 
-    public boolean contemUsername(String projectname) {
+    public boolean contemProjectname(String projectname) {
         return this.projetoRepository.containsProjectname(projectname);
     }
 
