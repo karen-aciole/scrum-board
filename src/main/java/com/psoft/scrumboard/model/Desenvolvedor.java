@@ -1,4 +1,4 @@
 package com.psoft.scrumboard.model;
 
-public class Desenvolvedor {
+public class Desenvolvedor implements Papel {
 }

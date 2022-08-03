@@ -1,4 +1,4 @@
 package com.psoft.scrumboard.model;
 
-public class ScrumMaster {
+public class ScrumMaster implements Papel {
 }
