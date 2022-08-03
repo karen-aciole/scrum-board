@@ -10,6 +10,8 @@ public class Usuario {
 	
 	private String senha;
 	
+	private Papel papel;
+	
 	public Usuario(String nomeCompleto, String username, String email, String senha) {
 		this.nomeCompleto = nomeCompleto;
 		this.username = username;

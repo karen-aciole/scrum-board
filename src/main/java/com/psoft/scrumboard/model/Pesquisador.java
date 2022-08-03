@@ -1,4 +1,4 @@
 package com.psoft.scrumboard.model;
 
-public class Pesquisador {
+public class Pesquisador implements Papel {
 }

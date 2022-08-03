@@ -1,4 +1,4 @@
 package com.psoft.scrumboard.model;
 
-public class Estagiario {
+public class Estagiario implements Papel {
 }
