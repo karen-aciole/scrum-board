@@ -1,5 +1,7 @@
 package com.psoft.scrumboard.model;
 
+import com.psoft.scrumboard.model.estagioDesenvolvimento.EstagioDesenvolvimento;
+
 public class UserStory {
 	
     private String titulo;

@@ -1,6 +1,6 @@
 package com.psoft.scrumboard.dto;
 
-import com.psoft.scrumboard.model.EstagioDesenvolvimento;
+import com.psoft.scrumboard.model.estagioDesenvolvimento.EstagioDesenvolvimento;
 
 public class UserStoryDTO {
 
