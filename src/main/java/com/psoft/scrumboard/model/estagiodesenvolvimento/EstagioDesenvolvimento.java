@@ -1,5 +1,7 @@
-package com.psoft.scrumboard.model.estagioDesenvolvimento;
+package com.psoft.scrumboard.model.estagiodesenvolvimento;
 
 public interface EstagioDesenvolvimento {
+	
+	public String getTipo();
 
 }
