@@ -3,11 +3,11 @@ package com.psoft.scrumboard.repository;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.psoft.scrumboard.model.estagioDesenvolvimento.Done;
-import com.psoft.scrumboard.model.estagioDesenvolvimento.EstagioDesenvolvimento;
-import com.psoft.scrumboard.model.estagioDesenvolvimento.ToDo;
-import com.psoft.scrumboard.model.estagioDesenvolvimento.ToVerify;
-import com.psoft.scrumboard.model.estagioDesenvolvimento.WorkInProgress;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.Done;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.ToDo;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.ToVerify;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.WorkInProgress;
 
 public class EstagioDesenvolvimentoRepository {
 	

@@ -1,6 +1,6 @@
 package com.psoft.scrumboard.model;
 
-import com.psoft.scrumboard.model.estagioDesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 
 public class UserStory {
 	
@@ -8,9 +8,9 @@ public class UserStory {
     
     private String descricao;
     
-    private String estagioDesenvolvimento;
+    private EstagioDesenvolvimento estagioDesenvolvimento;
 
-    public UserStory(String titulo, String descricao, String estagioDesenvolvimento) {
+    public UserStory(String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento; // o estágio é TODO por default
@@ -28,18 +28,18 @@ public class UserStory {
         this.descricao = descricao;
     }
 
-    public String getEstagioDesenvolvimento() {
+    public EstagioDesenvolvimento getEstagioDesenvolvimento() {
         return this.estagioDesenvolvimento;
     }
 
-    public void setEstagioDesenvolvimento(String estagioDesenvolvimento) {
+    public void setEstagioDesenvolvimento(EstagioDesenvolvimento estagioDesenvolvimento) {
         this.estagioDesenvolvimento = estagioDesenvolvimento;
     }
 
     public String toString() {
         return "Informações da UserStory '" + this.titulo + "'\n"
                 + "Descrição: " + this.descricao + "\n"
-                + "Estágio de desenvolvimento: " + this.estagioDesenvolvimento;
+                + "Estágio de desenvolvimento: " + this.estagioDesenvolvimento.getTipo();
     }
 
 }

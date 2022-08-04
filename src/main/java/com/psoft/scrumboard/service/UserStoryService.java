@@ -2,6 +2,8 @@ package com.psoft.scrumboard.service;
 
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.model.UserStory;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +13,17 @@ public class UserStoryService {
 
     @Autowired
     private UserStoryRepository userStoryRepository;
+    
+    @Autowired
+    private EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository;
 
     public String criaUserStory(UserStoryDTO userStoryDTO) {
-        UserStory userStory = new UserStory(userStoryDTO.getTitulo(),
+    	EstagioDesenvolvimento estagioDesenvolvimento =
+    			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(1); // chave 1 está relacionada a ToDo
+    			
+    	UserStory userStory = new UserStory(userStoryDTO.getTitulo(),
                 userStoryDTO.getDescricao(),
-                userStoryDTO.getEstagioDesenvolvimento()); // futuramente remover essa linha do UserStoryDTO
+                estagioDesenvolvimento);
 
         this.userStoryRepository.addUserStory(userStory);
 
@@ -40,7 +48,7 @@ public class UserStoryService {
         } else {
             userStory = new UserStory(userStoryDTO.getTitulo(),
                     userStoryDTO.getDescricao(),
-                    userStoryDTO.getEstagioDesenvolvimento()); // futuramente remover essa linha do UserStoryDTO
+                    null); // futuramente remover essa linha do UserStoryDTO
 
             this.userStoryRepository.addUserStory(userStory);
 

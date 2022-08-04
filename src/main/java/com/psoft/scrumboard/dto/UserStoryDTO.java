@@ -1,31 +1,24 @@
 package com.psoft.scrumboard.dto;
 
-import com.psoft.scrumboard.model.estagioDesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 
 public class UserStoryDTO {
 
     private String titulo;
     
     private String descricao;
-
-    private String estagioDesenvolvimento; // remover depois que classes de estagio forem implementadas
-
-    public UserStoryDTO(String titulo, String descricao, String estagioDesenvolvimento) {
+    
+    public UserStoryDTO(String titulo, String descricao) {
         this.titulo = titulo;
         this.descricao = descricao;
-        this.estagioDesenvolvimento = estagioDesenvolvimento;
     }
 
     public String getTitulo() {
-        return titulo;
+        return this.titulo;
     }
 
     public String getDescricao() {
-        return descricao;
-    }
-
-    public String getEstagioDesenvolvimento() {
-        return estagioDesenvolvimento;
+        return this.descricao;
     }
 
 }
