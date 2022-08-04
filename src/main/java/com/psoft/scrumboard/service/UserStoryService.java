@@ -55,7 +55,7 @@ public class UserStoryService {
             this.userStoryRepository.delUserStory(titulo);
         }
 
-        return "UserStory com titulo " + titulo + " removida";
+        return "UserStory com titulo '" + titulo + "' removida";
     }
 
 }

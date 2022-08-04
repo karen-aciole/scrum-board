@@ -21,7 +21,7 @@ public class UserStoryController {
     public ResponseEntity<?> cadastraUserStory(@RequestBody UserStoryDTO userStoryDTO, UriComponentsBuilder ucBuilder) {
 
         if (this.userStoryService.contemUserStory(userStoryDTO.getTitulo())) {
-            return new ResponseEntity<String>("UserStory já cadastrado no sistema - titulo não disponível", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory já cadastrada no sistema - titulo não disponível", HttpStatus.CONFLICT);
         }
 
         String titulo = this.userStoryService.criaUserStory(userStoryDTO);
@@ -29,6 +29,28 @@ public class UserStoryController {
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/userstory/{titulo}", method = RequestMethod.GET)
+    public ResponseEntity<?> acessaInfoUserStory(@PathVariable String titulo) {
 
+        if (!(this.userStoryService.contemUserStory(titulo))) {
+            return new ResponseEntity<String>("UserStory não está cadastrada no sistema.", HttpStatus.CONFLICT);
+        }
+
+        String info = this.userStoryService.getInfoUserStory(titulo);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userstory/{titulo}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeUserStory(@PathVariable String titulo) {
+
+        if (!(this.userStoryService.contemUserStory(titulo))) {
+            return new ResponseEntity<String>("UserStory não está cadastrada no sistema.", HttpStatus.CONFLICT);
+        }
+
+        String info = this.userStoryService.deletaUserStory(titulo);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
 
 }
