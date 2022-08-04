@@ -57,7 +57,7 @@ public class UsuarioService {
 		
 	}
 	
-	public String deletaUsuario(String username, String  senha) {
+	public String deletaUsuario(String username, String senha) {
 		Usuario usuario = this.usuarioRepository.getUser(username);
 		
 		if (!(usuario.getSenha().equals(senha))) {
