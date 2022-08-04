@@ -8,9 +8,9 @@ public class UserStoryDTO {
     
     private String descricao;
 
-    private EstagioDesenvolvimento estagioDesenvolvimento; // remover depois que classes de estagio forem implementadas
+    private String estagioDesenvolvimento; // remover depois que classes de estagio forem implementadas
 
-    public UserStoryDTO(String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
+    public UserStoryDTO(String titulo, String descricao, String estagioDesenvolvimento) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento;
@@ -24,7 +24,7 @@ public class UserStoryDTO {
         return descricao;
     }
 
-    public EstagioDesenvolvimento getEstagioDesenvolvimento() {
+    public String getEstagioDesenvolvimento() {
         return estagioDesenvolvimento;
     }
 

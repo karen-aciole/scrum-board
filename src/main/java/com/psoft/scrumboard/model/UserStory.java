@@ -8,9 +8,9 @@ public class UserStory {
     
     private String descricao;
     
-    private EstagioDesenvolvimento estagioDesenvolvimento;
+    private String estagioDesenvolvimento;
 
-    public UserStory(String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
+    public UserStory(String titulo, String descricao, String estagioDesenvolvimento) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento; // o estágio é TODO por default
@@ -28,11 +28,11 @@ public class UserStory {
         this.descricao = descricao;
     }
 
-    public EstagioDesenvolvimento getEstagioDesenvolvimento() {
+    public String getEstagioDesenvolvimento() {
         return this.estagioDesenvolvimento;
     }
 
-    public void setEstagioDesenvolvimento(EstagioDesenvolvimento estagioDesenvolvimento) {
+    public void setEstagioDesenvolvimento(String estagioDesenvolvimento) {
         this.estagioDesenvolvimento = estagioDesenvolvimento;
     }
 
