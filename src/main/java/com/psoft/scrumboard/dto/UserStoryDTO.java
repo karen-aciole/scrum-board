@@ -3,6 +3,7 @@ package com.psoft.scrumboard.dto;
 public class UserStoryDTO {
 
     private String titulo;
+    
     private String descricao;
 
     public UserStoryDTO(String titulo, String descricao) {
