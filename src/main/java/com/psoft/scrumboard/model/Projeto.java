@@ -7,12 +7,14 @@ public class Projeto {
     private String descricao;
 
     private String instituicaoParceira;
-
-
-    public Projeto(String nome, String descricao, String instituicaoParceira) {
+    
+    private Integrante scrumMaster;
+    
+    public Projeto(String nome, String descricao, String instituicaoParceira, Integrante scrumMaster) {
         this.nome = nome;
         this.descricao = descricao;
         this.instituicaoParceira = instituicaoParceira;
+        this.scrumMaster = scrumMaster;
     }
 
     public String getNome() {
