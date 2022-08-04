@@ -2,6 +2,8 @@ package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.ProjetoDTO;
 import com.psoft.scrumboard.service.ProjetoService;
+import com.psoft.scrumboard.service.UsuarioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +17,22 @@ public class ProjetoController {
 
     @Autowired
     private ProjetoService projetoService;
+    
+    @Autowired
+    private UsuarioService usuarioService;
 
     @RequestMapping(value = "/projeto/", method = RequestMethod.POST)
-    public ResponseEntity<?> cadastraProjeto(@RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> cadastraProjeto(@RequestParam String scrumMasterUsername, @RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
 
         if (this.projetoService.contemProjectname(projetoDTO.getNome())) {
             return new ResponseEntity<String>("Projeto já cadastrado no sistema - projectname não disponível", HttpStatus.CONFLICT);
         }
+        
+        if (!(this.usuarioService.contemUsername(scrumMasterUsername))) {
+			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		}
 
-        String projectname = this.projetoService.criaProjeto(projetoDTO);
+        String projectname = this.projetoService.criaProjeto(scrumMasterUsername, projetoDTO);
 
         return new ResponseEntity<String>("Projeto cadastrado com projectname '" + projetoDTO.getNome() + "'", HttpStatus.CREATED);
     }
