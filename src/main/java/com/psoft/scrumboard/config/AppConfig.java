@@ -11,6 +11,7 @@ import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.TaskRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
 import com.psoft.scrumboard.repository.UsuarioRepository;
+import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.PapelRepository;
 
 @Configuration
@@ -40,6 +41,11 @@ public class AppConfig {
 	@Bean
 	public TaskRepository taskRepository() {
 		return new TaskRepository();
+	}
+	
+	@Bean
+	public EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository() {
+		return new EstagioDesenvolvimentoRepository();
 	}
 	
 }
