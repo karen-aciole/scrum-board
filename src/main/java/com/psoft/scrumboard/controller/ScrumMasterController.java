@@ -23,4 +23,14 @@ public class ScrumMasterController {
 
         return new ResponseEntity<String>(papeis, HttpStatus.OK);
     }
+    @RequestMapping(value = "/scrummaster/estagiosDesenvolvimentoDisponiveis", method = RequestMethod.GET)
+    public ResponseEntity<?> listaEstagiosDeDesenvolvimento() {
+        String estagiosDesenvolvimento = "Estágios de desenvolvimento que uma User Story pode assumir:\n\n" +
+                "- To Do\n" +
+                "- Work in Progress\n" +
+                "- To Verify\n" +
+                "- Done";
+
+        return new ResponseEntity<String>(estagiosDesenvolvimento, HttpStatus.OK);
+    }
 }
