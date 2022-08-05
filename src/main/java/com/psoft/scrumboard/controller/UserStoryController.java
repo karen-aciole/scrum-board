@@ -53,4 +53,16 @@ public class UserStoryController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/userstory/{nomeProjeto}/{numero}", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizaUserStory(@PathVariable String nomeProjeto, @PathVariable Integer numero, @RequestBody UserStoryDTO userStoryDTO) {
+
+        if (!(this.userStoryService.contemUserStory(nomeProjeto, numero))) {
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+        }
+
+        String info = this.userStoryService.updateInfoUserStory(nomeProjeto, userStoryDTO);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
 }
