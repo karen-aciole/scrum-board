@@ -9,26 +9,26 @@ import java.util.Map;
 @Repository
 public class UserStoryRepository {
 
-    private Map<String, UserStory> userStories;
+    private Map<Integer, UserStory> userStories;
 
     public UserStoryRepository() {
-        this.userStories = new HashMap<String, UserStory>();
+        this.userStories = new HashMap<Integer, UserStory>();
     }
 
     public void addUserStory(UserStory userStory) {
-        this.userStories.put(userStory.getTitulo(), userStory);
+        this.userStories.put(userStory.getNumero(), userStory);
     }
 
-    public boolean containsUserStory(String titulo) {
-        return this.userStories.containsKey(titulo);
+    public boolean containsUserStory(Integer numero) {
+        return this.userStories.containsKey(numero);
     }
 
-    public UserStory getUserStory(String titulo) {
-        return this.userStories.get(titulo);
+    public UserStory getUserStory(Integer numero) {
+        return this.userStories.get(numero);
     }
 
-    public void delUserStory(String titulo) {
-        this.userStories.remove(titulo);
+    public void delUserStory(Integer numero) {
+        this.userStories.remove(numero);
     }
 
 }

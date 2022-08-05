@@ -4,22 +4,29 @@ import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 
 public class UserStory {
 	
+    private Integer numero;
+    
     private String titulo;
     
     private String descricao;
     
     private EstagioDesenvolvimento estagioDesenvolvimento;
 
-    public UserStory(String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
+    public UserStory(Integer numero, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
+        this.numero = numero;
         this.titulo = titulo;
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento; // o estágio é TODO por default
     }
 
+    public Integer getNumero() { 
+    	return this.numero;
+    }
+    
     public String getTitulo() {
         return titulo;
     }
-
+    
     public String getDescricao() {
         return descricao;
     }
@@ -37,7 +44,7 @@ public class UserStory {
     }
 
     public String toString() {
-        return "Informações da UserStory '" + this.titulo + "'\n"
+        return "Informações da UserStory '" + this.titulo + "' - US" + this.numero + "\n"
                 + "Descrição: " + this.descricao + "\n"
                 + "Estágio de desenvolvimento: " + this.estagioDesenvolvimento.getTipo();
     }
