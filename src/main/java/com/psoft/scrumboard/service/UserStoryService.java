@@ -24,7 +24,7 @@ public class UserStoryService {
     	EstagioDesenvolvimento estagioDesenvolvimento =
     			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(1); // chave 1 está relacionada a ToDo
     			
-    	UserStory userStory = new UserStory(userStoryDTO.getNumero(), userStoryDTO.getTitulo(),
+    	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
                 userStoryDTO.getDescricao(),
                 estagioDesenvolvimento);
     	
@@ -35,25 +35,25 @@ public class UserStoryService {
         return userStory.getTitulo();
     }
 
-    public boolean contemUserStory(String nomeProjeto, Integer numero) {
+    public boolean contemUserStory(String nomeProjeto, Integer idUserStory) {
         if (this.projetoRepository.containsProjectname(nomeProjeto)) {
-        	return this.projetoRepository.getProjeto(nomeProjeto).getUserStoryRepository().containsUserStory(numero);
+        	return this.projetoRepository.getProjeto(nomeProjeto).getUserStoryRepository().containsUserStory(idUserStory);
         } else {
         	return false;
         }
     }
 
-    public String getInfoUserStory(String nomeProjeto, Integer numero) {
-    	return this.projetoRepository.getProjeto(nomeProjeto).getUserStoryRepository().getUserStory(numero).toString();
+    public String getInfoUserStory(String nomeProjeto, Integer idUserStory) {
+    	return this.projetoRepository.getProjeto(nomeProjeto).getUserStoryRepository().getUserStory(idUserStory).toString();
     }
 
     public String updateInfoUserStory(String nomeProjeto, UserStoryDTO userStoryDTO) {
         UserStory userStory;
 
-        if (!contemUserStory(nomeProjeto, userStoryDTO.getNumero())) {
+        if (!contemUserStory(nomeProjeto, userStoryDTO.getId())) {
             return "UserStory não encontrada";
         } else {
-            userStory = new UserStory(userStoryDTO.getNumero(), userStoryDTO.getTitulo(),
+            userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
                     userStoryDTO.getDescricao(),
                     null); // futuramente remover essa linha do UserStoryDTO
 
@@ -63,11 +63,11 @@ public class UserStoryService {
         }
     }
 
-    public String deletaUserStory(String nomeProjeto, Integer numero) {
+    public String deletaUserStory(String nomeProjeto, Integer idUserStory) {
         
     	UserStoryRepository userStories = this.projetoRepository.getProjeto(nomeProjeto).getUserStoryRepository();
-    	String titulo = userStories.getUserStory(numero).getTitulo();
-    	userStories.delUserStory(numero);
+    	String titulo = userStories.getUserStory(idUserStory).getTitulo();
+    	userStories.delUserStory(idUserStory);
     	
     	return "UserStory com titulo '" + titulo + "' removida";
     }
