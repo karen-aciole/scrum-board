@@ -38,9 +38,4 @@ public class AppConfig {
 		return new EstagioDesenvolvimentoRepository();
 	}
 	
-	@Bean
-	public EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository() {
-		return new EstagioDesenvolvimentoRepository();
-	}
-	
 }
