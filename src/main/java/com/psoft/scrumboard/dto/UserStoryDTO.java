@@ -2,20 +2,20 @@ package com.psoft.scrumboard.dto;
 
 public class UserStoryDTO {
 	
-	private Integer numero;
+	private Integer id;
 
     private String titulo;
     
     private String descricao;
     
-    public UserStoryDTO(Integer numero, String titulo, String descricao) {
-        this.numero = numero;
+    public UserStoryDTO(Integer id, String titulo, String descricao) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
     }
 
-    public Integer getNumero() { 
-    	return this.numero;
+    public Integer getId() {
+    	return this.id;
     }
     
     public String getTitulo() {

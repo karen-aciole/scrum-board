@@ -16,19 +16,19 @@ public class UserStoryRepository {
     }
 
     public void addUserStory(UserStory userStory) {
-        this.userStories.put(userStory.getNumero(), userStory);
+        this.userStories.put(userStory.getId(), userStory);
     }
 
-    public boolean containsUserStory(Integer numero) {
-        return this.userStories.containsKey(numero);
+    public boolean containsUserStory(Integer id) {
+        return this.userStories.containsKey(id);
     }
 
-    public UserStory getUserStory(Integer numero) {
-        return this.userStories.get(numero);
+    public UserStory getUserStory(Integer id) {
+        return this.userStories.get(id);
     }
 
-    public void delUserStory(Integer numero) {
-        this.userStories.remove(numero);
+    public void delUserStory(Integer id) {
+        this.userStories.remove(id);
     }
 
 }

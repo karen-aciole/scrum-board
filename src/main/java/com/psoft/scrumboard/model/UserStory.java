@@ -4,7 +4,7 @@ import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 
 public class UserStory {
 	
-    private Integer numero;
+    private Integer id;
     
     private String titulo;
     
@@ -12,15 +12,15 @@ public class UserStory {
     
     private EstagioDesenvolvimento estagioDesenvolvimento;
 
-    public UserStory(Integer numero, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
-        this.numero = numero;
+    public UserStory(Integer id, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
+        this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento; // o estágio é TODO por default
     }
 
-    public Integer getNumero() { 
-    	return this.numero;
+    public Integer getId() {
+    	return this.id;
     }
     
     public String getTitulo() {
@@ -44,7 +44,7 @@ public class UserStory {
     }
 
     public String toString() {
-        return "Informações da UserStory '" + this.titulo + "' - US" + this.numero + "\n"
+        return "Informações da UserStory '" + this.titulo + "' - US" + this.getId() + "\n"
                 + "Descrição: " + this.descricao + "\n"
                 + "Estágio de desenvolvimento: " + this.estagioDesenvolvimento.getTipo();
     }
