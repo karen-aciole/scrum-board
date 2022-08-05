@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.model;
 
+import com.psoft.scrumboard.repository.IntegranteRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
 
 public class Projeto {
@@ -13,6 +14,8 @@ public class Projeto {
     private Integrante scrumMaster;
     
     private UserStoryRepository userStoryRepository;
+
+    private final IntegranteRepository integranteRepository;
     
     public Projeto(String nome, String descricao, String instituicaoParceira, Integrante scrumMaster) {
         this.nome = nome;
@@ -20,6 +23,7 @@ public class Projeto {
         this.instituicaoParceira = instituicaoParceira;
         this.scrumMaster = scrumMaster;
         this.userStoryRepository = new UserStoryRepository();
+        this.integranteRepository = new IntegranteRepository();
     }
 
     public String getNome() {
@@ -52,6 +56,14 @@ public class Projeto {
     
     public UserStoryRepository getUserStoryRepository() {
     	return this.userStoryRepository;
+    }
+
+    public IntegranteRepository getIntegranteRepository() {
+        return this.integranteRepository;
+    }
+
+    public void adicionaIntegrante(Integrante integrante){
+        this.integranteRepository.addUser(integrante);
     }
 
     public String toString() {
