@@ -18,37 +18,37 @@ public class UserStoryController {
     private UserStoryService userStoryService;
 
     @RequestMapping(value = "/userstory/", method = RequestMethod.POST)
-    public ResponseEntity<?> cadastraUserStory(@RequestBody UserStoryDTO userStoryDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> cadastraUserStory(@RequestParam String nomeProjeto, @RequestBody UserStoryDTO userStoryDTO, UriComponentsBuilder ucBuilder) {
 
-        if (this.userStoryService.contemUserStory(userStoryDTO.getTitulo())) {
-            return new ResponseEntity<String>("UserStory já cadastrada no sistema - titulo não disponível", HttpStatus.CONFLICT);
+        if (this.userStoryService.contemUserStory(nomeProjeto, userStoryDTO.getNumero())) {
+            return new ResponseEntity<String>("UserStory já cadastrada no sistema - número não disponível", HttpStatus.CONFLICT);
         }
 
-        String titulo = this.userStoryService.criaUserStory(userStoryDTO);
+        String titulo = this.userStoryService.criaUserStory(nomeProjeto, userStoryDTO);
 
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/userstory/{titulo}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoUserStory(@PathVariable String titulo) {
+    @RequestMapping(value = "/userstory/{nomeProjeto}/{numero}", method = RequestMethod.GET)
+    public ResponseEntity<?> acessaInfoUserStory(@PathVariable String nomeProjeto, @PathVariable Integer numero) {
 
-        if (!(this.userStoryService.contemUserStory(titulo))) {
-            return new ResponseEntity<String>("UserStory não está cadastrada no sistema.", HttpStatus.CONFLICT);
+        if (!(this.userStoryService.contemUserStory(nomeProjeto, numero))) {
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         }
 
-        String info = this.userStoryService.getInfoUserStory(titulo);
+        String info = this.userStoryService.getInfoUserStory(nomeProjeto, numero);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userstory/{titulo}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeUserStory(@PathVariable String titulo) {
+    @RequestMapping(value = "/userstory/{nomeProjeto}/{numero}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeUserStory(@PathVariable String nomeProjeto, @PathVariable Integer numero) {
 
-        if (!(this.userStoryService.contemUserStory(titulo))) {
-            return new ResponseEntity<String>("UserStory não está cadastrada no sistema.", HttpStatus.CONFLICT);
+        if (!(this.userStoryService.contemUserStory(nomeProjeto, numero))) {
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         }
 
-        String info = this.userStoryService.deletaUserStory(titulo);
+        String info = this.userStoryService.deletaUserStory(nomeProjeto, numero);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
