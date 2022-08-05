@@ -38,6 +38,17 @@ public class ProjetoService {
         return projeto.getNome();
     }
 
+    public String adicionaDesenvolvedor(String projectName, String desenvolvedorUsername){
+        Usuario desenvolvedorUsuario = usuarioRepository.getUser(desenvolvedorUsername);
+        Papel desenvolvedorPapel = this.papelRepository.getPapelByID(3);
+        Integrante desenvolvedor = new Integrante(desenvolvedorUsuario, desenvolvedorPapel);
+
+        Projeto projeto = this.projetoRepository.getProjeto(projectName);
+        projeto.adicionaIntegrante(desenvolvedor);
+
+        return projeto.getNome();
+    }
+
     public boolean contemProjectname(String projectname) {
         return this.projetoRepository.containsProjectname(projectname);
     }

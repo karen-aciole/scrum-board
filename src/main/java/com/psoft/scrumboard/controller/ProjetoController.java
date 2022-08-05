@@ -37,6 +37,22 @@ public class ProjetoController {
         return new ResponseEntity<String>("Projeto cadastrado com projectname '" + projetoDTO.getNome() + "'", HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/projeto/{projectName}/{userName}", method = RequestMethod.POST)
+    public ResponseEntity<?> adicionaIntegrante(@RequestParam String projectName, @RequestParam String userName, UriComponentsBuilder ucBuilder) {
+
+        if (!this.projetoService.contemProjectname(projectName)) {
+            return new ResponseEntity<String>("Projeto nao cadastrado no sistema - projectname invalido", HttpStatus.CONFLICT);
+        }
+
+        if (!(this.usuarioService.contemUsername(userName))) {
+            return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+        }
+
+        String projectname = this.projetoService.adicionaDesenvolvedor(projectName, userName);
+
+        return new ResponseEntity<String>("Projeto cadastrado com projectname '" + projectname + "'", HttpStatus.CREATED);
+    }
+
     @RequestMapping(value = "/projeto/{projectname}", method = RequestMethod.GET)
     public ResponseEntity<?> acessaInfoProjeto(@PathVariable String projectname) {
 
