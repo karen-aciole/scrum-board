@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.model;
 
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.repository.IntegranteRepository;
 
 public class UserStory {
 	
@@ -11,12 +12,15 @@ public class UserStory {
     private String descricao;
     
     private EstagioDesenvolvimento estagioDesenvolvimento;
+    
+    private IntegranteRepository responsaveis;
 
     public UserStory(Integer id, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento; // o estágio é TODO por default
+        this.responsaveis = new IntegranteRepository();
     }
 
     public Integer getId() {
@@ -41,6 +45,10 @@ public class UserStory {
 
     public void setEstagioDesenvolvimento(EstagioDesenvolvimento estagioDesenvolvimento) {
         this.estagioDesenvolvimento = estagioDesenvolvimento;
+    }
+    
+    public IntegranteRepository getResponsaveis() {
+    	return this.responsaveis;
     }
 
     public String toString() {

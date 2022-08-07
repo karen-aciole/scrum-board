@@ -2,9 +2,9 @@ package com.psoft.scrumboard.service;
 
 import com.psoft.scrumboard.dto.ProjetoDTO;
 import com.psoft.scrumboard.model.Integrante;
-import com.psoft.scrumboard.model.Papel;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Usuario;
+import com.psoft.scrumboard.model.papel.Papel;
 import com.psoft.scrumboard.repository.PapelRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UsuarioRepository;
@@ -53,6 +53,10 @@ public class ProjetoService {
         this.projetoRepository.delProject(projectname);
 
         return "Projeto removido com nome '" + projectname + "'";
+    }
+    
+    public boolean contemIntegrante(String nomeProjeto, String username) {
+    	return this.projetoRepository.getProjeto(nomeProjeto).contemIntegrante(username);
     }
 
 }
