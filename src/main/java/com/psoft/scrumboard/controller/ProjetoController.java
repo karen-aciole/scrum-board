@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.ProjetoDTO;
+import com.psoft.scrumboard.dto.UsuarioDTO;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UsuarioService;
 
@@ -61,5 +62,26 @@ public class ProjetoController {
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
-    
+
+    @RequestMapping(value = "/projeto/{scrumMasterUsername}/{projectname}", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizaInfoProjeto(@RequestParam String scrumMasterUsername, @RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
+
+        if (!(this.projetoService.contemProjectname(projetoDTO.getNome()))) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectname inválido", HttpStatus.CONFLICT);
+        }
+
+        if (!(this.usuarioService.contemUsername(scrumMasterUsername))) {
+            return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+        }
+
+        if (!this.projetoService.getScrumMasterName(projetoDTO.getNome()).equals(scrumMasterUsername)) {
+            return new ResponseEntity<String>("O Scrum master informado nao pertence ao projeto em questao", HttpStatus.CONFLICT);
+        }
+
+
+        String info = this.projetoService.updateInfoProjeto(scrumMasterUsername, projetoDTO);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
 }

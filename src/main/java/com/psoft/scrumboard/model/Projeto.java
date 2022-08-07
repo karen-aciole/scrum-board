@@ -58,7 +58,8 @@ public class Projeto {
 
         String userInfo = "Informações do projeto de nome '" + this.nome + "'\n"
                 + "Descricao: " + this.descricao + "\n"
-                + "Instituicao Parceira: " + this.instituicaoParceira;
+                + "Instituicao Parceira: " + this.instituicaoParceira + "\n"
+                + "Scrum Master: " + this.scrumMaster.getUsuario().getUsername();
 
         return userInfo;
     }
