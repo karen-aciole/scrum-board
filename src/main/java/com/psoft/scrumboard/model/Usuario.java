@@ -1,5 +1,7 @@
 package com.psoft.scrumboard.model;
 
+import com.psoft.scrumboard.model.papel.Papel;
+
 public class Usuario {
 	
 	private String nomeCompleto;
