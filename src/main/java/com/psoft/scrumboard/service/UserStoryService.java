@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.service;
 
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
@@ -71,7 +72,29 @@ public class UserStoryService {
     	
     	return "UserStory com titulo '" + titulo + "' removida";
     }
-
+    
+    private boolean usuarioTemPapelPermitido(Integrante integrante) {
+    	
+    	if (integrante.getPapel().getTipo().equals("Pesquisador")
+    			|| integrante.getPapel().getTipo().equals("Desenvolvedor")
+    			|| integrante.getPapel().getTipo().equals("Estagiario")) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    	
+    }
+    
+    public String atribuiUsuarioUserStory(String nomeProjeto, Integer idUserStory, String responsavelUsername) {
+    	Integrante integrante = this.projetoRepository.getProjeto(nomeProjeto).getIntegranteRepository().getIntegrante(responsavelUsername);
+    	
+    	if (usuarioTemPapelPermitido(integrante)) {
+    		this.projetoRepository.getProjeto(nomeProjeto).getUserStoryRepository().getUserStory(idUserStory).getResponsaveis().addIntegrante(integrante);
+    		return integrante.getUsuario().getUsername();
+    	} else {
+    		return "Usuário não possui um tipo de papel permitido";
+    	}
+    	
+    }
+    
 }
-
-

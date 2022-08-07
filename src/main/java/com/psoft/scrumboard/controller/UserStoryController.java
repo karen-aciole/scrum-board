@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,9 @@ public class UserStoryController {
 
     @Autowired
     private UserStoryService userStoryService;
+    
+    @Autowired
+    private ProjetoService projetoService;
 
     @RequestMapping(value = "/userstory/", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraUserStory(@RequestParam String nomeProjeto, @RequestBody UserStoryDTO userStoryDTO, UriComponentsBuilder ucBuilder) {
@@ -63,6 +67,26 @@ public class UserStoryController {
         String info = this.userStoryService.updateInfoUserStory(nomeProjeto, userStoryDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/userstory/{nomeProjeto}/{idUserStory}/responsaveis/", method = RequestMethod.POST)
+    public ResponseEntity<?> participaDesenvolvimentoUserStory(@PathVariable String nomeProjeto, @PathVariable Integer idUserStory, @RequestParam String responsavelUsername) {
+    	
+    	if (!(this.projetoService.contemProjectname(nomeProjeto))) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido", HttpStatus.CONFLICT);
+        }
+    	
+    	if (!(this.userStoryService.contemUserStory(nomeProjeto, idUserStory))) {
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto", HttpStatus.CONFLICT);
+        }
+    	
+    	if (!(this.projetoService.contemIntegrante(nomeProjeto, responsavelUsername))) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto", HttpStatus.CONFLICT);
+        }
+    	
+    	String info = this.userStoryService.atribuiUsuarioUserStory(nomeProjeto, idUserStory, responsavelUsername);
+    	
+    	return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
 }
