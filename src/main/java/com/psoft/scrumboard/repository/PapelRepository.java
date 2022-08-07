@@ -3,12 +3,12 @@ package com.psoft.scrumboard.repository;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.psoft.scrumboard.model.Desenvolvedor;
-import com.psoft.scrumboard.model.Estagiario;
-import com.psoft.scrumboard.model.Papel;
-import com.psoft.scrumboard.model.Pesquisador;
-import com.psoft.scrumboard.model.ProductOwner;
-import com.psoft.scrumboard.model.ScrumMaster;
+import com.psoft.scrumboard.model.papel.Desenvolvedor;
+import com.psoft.scrumboard.model.papel.Estagiario;
+import com.psoft.scrumboard.model.papel.Papel;
+import com.psoft.scrumboard.model.papel.Pesquisador;
+import com.psoft.scrumboard.model.papel.ProductOwner;
+import com.psoft.scrumboard.model.papel.ScrumMaster;
 
 public class PapelRepository {
 	
