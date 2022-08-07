@@ -34,7 +34,7 @@ public class ProjetoController {
 
         String projectname = this.projetoService.criaProjeto(scrumMasterUsername, projetoDTO);
 
-        return new ResponseEntity<String>("Projeto cadastrado com projectname '" + projetoDTO.getNome() + "'", HttpStatus.CREATED);
+        return new ResponseEntity<String>("Projeto cadastrado com nome '" + projectname + "'", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/projeto/{projectname}", method = RequestMethod.GET)
