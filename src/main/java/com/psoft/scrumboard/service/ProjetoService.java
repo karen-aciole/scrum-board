@@ -24,8 +24,8 @@ public class ProjetoService {
     @Autowired
     private PapelRepository papelRepository;
 
-    public String criaProjeto(String scrumMasterUsername, ProjetoDTO projetoDTO) {
-        Usuario scrumMasterUsuario = usuarioRepository.getUser(scrumMasterUsername);
+    public int criaProjeto(ProjetoDTO projetoDTO) {
+        Usuario scrumMasterUsuario = usuarioRepository.getUser(projetoDTO.getScrumMasterName());
         Papel scrumMasterPapel = this.papelRepository.getPapelByID(0);
         Integrante scrumMaster = new Integrante(scrumMasterUsuario, scrumMasterPapel);
     	
@@ -33,30 +33,51 @@ public class ProjetoService {
                 projetoDTO.getDescricao(),
                 projetoDTO.getInstituicaoParceira(), scrumMaster);
 
-        this.projetoRepository.addProjeto(projeto);
-
-        return projeto.getNome();
+        return this.projetoRepository.addProjeto(projeto);
     }
 
-    public boolean contemProjectname(String projectname) {
-        return this.projetoRepository.containsProjectname(projectname);
+    public boolean contemProjectname(String projectName) {
+        return this.projetoRepository.containsProjectname(projectName);
     }
 
-    public String getInfoProjeto(String projectname) {
-        Projeto projeto = this.projetoRepository.getProjeto(projectname);
+    public boolean contemProjectKey(Integer projectKey) {
+        return this.projetoRepository.containsProjectKey(projectKey);
+    }
+
+    public String getInfoProjeto(Integer projectKey) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
 
         return projeto.toString();
 
     }
 
-    public String deletaProjeto(String projectname) {
-        this.projetoRepository.delProject(projectname);
+    public String getScrumMasterName(Integer projectKey){
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        Integrante integrante = projeto.getScrumMaster();
+        String scrumMastername = integrante.getUsuario().getUsername();
 
-        return "Projeto removido com nome '" + projectname + "'";
+        return scrumMastername;
+    }
+
+    public String deletaProjeto(Integer projectKey) {
+        this.projetoRepository.delProject(projectKey);
+
+        return "Projeto removido com nome '" + projectKey + "'";
     }
     
-    public boolean contemIntegrante(String nomeProjeto, String username) {
+    public boolean contemIntegrante(Integer nomeProjeto, String username) {
     	return this.projetoRepository.getProjeto(nomeProjeto).contemIntegrante(username);
     }
 
+    public String updateInfoProjeto(Integer key, ProjetoDTO projetoDTO) {
+        Projeto projeto = this.projetoRepository.getProjeto(key);
+
+        projeto.setDescricao(projetoDTO.getDescricao());
+        projeto.setName(projetoDTO.getNome());
+        projeto.setInstituicaoParceira(projetoDTO.getInstituicaoParceira());
+
+        return "Projeto atualizado com nome: '" + projeto.getNome() + "',\ndescricao: '" + projeto.getDescricao() + "'\n" +
+                "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Master: " + projetoDTO.getScrumMasterName();
+
+    }
 }

@@ -1,5 +1,7 @@
 package com.psoft.scrumboard.dto;
 
+import com.psoft.scrumboard.model.Integrante;
+
 public class ProjetoDTO {
     private String nome;
 
@@ -7,10 +9,14 @@ public class ProjetoDTO {
 
     private String instituicaoParceira;
 
-    public ProjetoDTO(String nome, String descricao, String instituicaoParceira) {
+    private String scrumMasterName;
+
+
+    public ProjetoDTO(String nome, String descricao, String instituicaoParceira, String scrumMasterName) {
         this.nome = nome;
         this.descricao = descricao;
         this.instituicaoParceira = instituicaoParceira;
+        this.scrumMasterName = scrumMasterName;
     }
 
     public String getNome() {
@@ -23,5 +29,9 @@ public class ProjetoDTO {
 
     public String getInstituicaoParceira() {
         return this.instituicaoParceira;
+    }
+
+    public String getScrumMasterName() {
+        return this.scrumMasterName;
     }
 }
