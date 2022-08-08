@@ -24,8 +24,8 @@ public class ProjetoService {
     @Autowired
     private PapelRepository papelRepository;
 
-    public String criaProjeto(String scrumMasterUsername, ProjetoDTO projetoDTO) {
-        Usuario scrumMasterUsuario = usuarioRepository.getUser(scrumMasterUsername);
+    public String criaProjeto(ProjetoDTO projetoDTO) {
+        Usuario scrumMasterUsuario = usuarioRepository.getUser(projetoDTO.getScrumMasterName());
         Papel scrumMasterPapel = this.papelRepository.getPapelByID(0);
         Integrante scrumMaster = new Integrante(scrumMasterUsuario, scrumMasterPapel);
     	
@@ -67,19 +67,12 @@ public class ProjetoService {
     	return this.projetoRepository.getProjeto(nomeProjeto).contemIntegrante(username);
     }
 
-    public String updateInfoProjeto(String scrumMaster, ProjetoDTO projetoDTO) {
+    public String updateInfoProjeto(ProjetoDTO projetoDTO) {
         Projeto projeto = this.projetoRepository.getProjeto(projetoDTO.getNome());
 
-        Usuario scrumMasterUsuario = usuarioRepository.getUser(scrumMaster);
-        Papel scrumMasterPapel = this.papelRepository.getPapelByID(0);
-        Integrante scrumMasterIntegrante = new Integrante(scrumMasterUsuario, scrumMasterPapel);
-
-        projeto = new Projeto(projetoDTO.getNome(),
-                projetoDTO.getDescricao(),
-                projetoDTO.getInstituicaoParceira(),
-                scrumMasterIntegrante);
-
-        this.projetoRepository.addProjeto(projeto);
+        projeto.setDescricao(projetoDTO.getDescricao());
+        projeto.setName(projetoDTO.getNome());
+        projeto.setInstituicaoParceira(projetoDTO.getInstituicaoParceira());
 
         return "Projeto atualizado com nome: '" + projeto.getNome() + "',\ndescricao: '" + projeto.getDescricao() + "'\n" +
                 "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Maste: " + projeto.getScrumMaster();

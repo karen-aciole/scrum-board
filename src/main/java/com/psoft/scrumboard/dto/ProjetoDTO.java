@@ -9,11 +9,14 @@ public class ProjetoDTO {
 
     private String instituicaoParceira;
 
+    private String scrumMasterName;
 
-    public ProjetoDTO(String nome, String descricao, String instituicaoParceira) {
+
+    public ProjetoDTO(String nome, String descricao, String instituicaoParceira, String scrumMasterName) {
         this.nome = nome;
         this.descricao = descricao;
         this.instituicaoParceira = instituicaoParceira;
+        this.scrumMasterName = scrumMasterName;
     }
 
     public String getNome() {
@@ -28,4 +31,7 @@ public class ProjetoDTO {
         return this.instituicaoParceira;
     }
 
+    public String getScrumMasterName() {
+        return this.scrumMasterName;
+    }
 }
