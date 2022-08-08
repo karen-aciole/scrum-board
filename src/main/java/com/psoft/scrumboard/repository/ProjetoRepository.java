@@ -14,11 +14,11 @@ public class ProjetoRepository {
 
     public ProjetoRepository() {this.projetos = new HashMap<Integer, Projeto>();}
 
-    //numero 200 deve ser ajustado de acordo com a regra de negocios
+    //numero 20000000 deve ser ajustado de acordo com a regra de negocios
     public int addProjeto(Projeto projeto) {
         Random random = new Random();
 
-        Integer key = random.nextInt(200);
+        Integer key = random.nextInt(20000000);
         this.projetos.put(key, projeto);
 
         return key;
