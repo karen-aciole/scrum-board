@@ -15,7 +15,7 @@ public class IntegranteRepository {
 		this.integrantes = new HashMap<String, Integrante>();
 	}
 	
-	public void addUser(Integrante integrante) {
+	public void addIntegrante(Integrante integrante) {
 		this.integrantes.put(integrante.getUsuario().getUsername(), integrante);
 	}
 	
@@ -23,12 +23,13 @@ public class IntegranteRepository {
 		return this.integrantes.containsKey(username);
 	}
 	
-	public Integrante getUser(String username) {
+	public Integrante getIntegrante(String username) {
 		return this.integrantes.get(username);
 	}
 	
-	public void delUser(String username) {
+	public void delIntegrante(String username) {
 		this.integrantes.remove(username);
 	}
+
 
 }

@@ -14,8 +14,8 @@ public class Projeto {
     private Integrante scrumMaster;
     
     private UserStoryRepository userStoryRepository;
-
-    private final IntegranteRepository integranteRepository;
+    
+    private IntegranteRepository integranteRepository;
     
     public Projeto(String nome, String descricao, String instituicaoParceira, Integrante scrumMaster) {
         this.nome = nome;
@@ -57,21 +57,27 @@ public class Projeto {
     public UserStoryRepository getUserStoryRepository() {
     	return this.userStoryRepository;
     }
-
+    
     public IntegranteRepository getIntegranteRepository() {
-        return this.integranteRepository;
+    	return this.integranteRepository;
+    }
+    
+    public boolean contemIntegrante(String username) {
+    	return this.integranteRepository.containsUsername(username);
     }
 
     public void adicionaIntegrante(Integrante integrante){
-        this.integranteRepository.addUser(integrante);
+        this.integranteRepository.addIntegrante(integrante);
     }
 
     public String toString() {
 
         String userInfo = "Informações do projeto de nome '" + this.nome + "'\n"
                 + "Descricao: " + this.descricao + "\n"
-                + "Instituicao Parceira: " + this.instituicaoParceira;
+                + "Instituicao Parceira: " + this.instituicaoParceira + "\n"
+                + "Scrum Master: " + this.scrumMaster.getUsuario().getUsername();
 
         return userInfo;
     }
+    
 }
