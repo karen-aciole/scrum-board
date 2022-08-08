@@ -67,15 +67,15 @@ public class ProjetoService {
     	return this.projetoRepository.getProjeto(nomeProjeto).contemIntegrante(username);
     }
 
-    public String updateInfoProjeto(ProjetoDTO projetoDTO) {
-        Projeto projeto = this.projetoRepository.getProjeto(projetoDTO.getNome());
+    public String updateInfoProjeto(String projectname, ProjetoDTO projetoDTO) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectname);
 
         projeto.setDescricao(projetoDTO.getDescricao());
         projeto.setName(projetoDTO.getNome());
         projeto.setInstituicaoParceira(projetoDTO.getInstituicaoParceira());
 
         return "Projeto atualizado com nome: '" + projeto.getNome() + "',\ndescricao: '" + projeto.getDescricao() + "'\n" +
-                "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Maste: " + projeto.getScrumMaster();
+                "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Master: " + projetoDTO.getScrumMasterName();
 
     }
 }

@@ -63,7 +63,7 @@ public class ProjetoController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/projeto/{projecname}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/projeto/{projectname}", method = RequestMethod.PUT)
     public ResponseEntity<?> atualizaInfoProjeto(@PathVariable String projectname, @RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
 
         if (!(this.projetoService.contemProjectname(projectname))) {
@@ -79,7 +79,7 @@ public class ProjetoController {
         }
 
 
-        String info = this.projetoService.updateInfoProjeto(projetoDTO);
+        String info = this.projetoService.updateInfoProjeto(projectname, projetoDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
