@@ -31,5 +31,9 @@ public class UsuarioRepository {
 	public void delUser(String username) {
 		this.usuarios.remove(username);
 	}
+	
+	public void updateUser(Usuario usuario) {
+		this.usuarios.replace(usuario.getUsername(), usuario);
+	}
 
 }

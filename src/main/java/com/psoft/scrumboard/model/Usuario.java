@@ -46,6 +46,14 @@ public class Usuario {
 		return this.senha;
 	}
 	
+	public void setNomeCompleto(String nomeCompleto) {
+		this.nomeCompleto = nomeCompleto;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	public String toString() {
 		
 		String userInfo = "Informações do usuário com username '" + this.username + "'\n"

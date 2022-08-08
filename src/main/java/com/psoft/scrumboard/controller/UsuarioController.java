@@ -48,13 +48,13 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.PUT)
-	public ResponseEntity<?> atualizaInfoUsuario(@RequestBody UsuarioDTO usuarioDTO, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> atualizaInfoUsuario(@PathVariable String username, @RequestParam String novoNomeCompleto, @RequestParam String novoEmail, @RequestParam String senha) {
 		
-		if (!(this.usuarioService.contemUsername(usuarioDTO.getUsername()))) {
+		if (!(this.usuarioService.contemUsername(username))) {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 		
-		String info = this.usuarioService.updateInfoUsuario(usuarioDTO);
+		String info = this.usuarioService.updateInfoUsuario(username, novoNomeCompleto, novoEmail, senha);
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);
 	}
