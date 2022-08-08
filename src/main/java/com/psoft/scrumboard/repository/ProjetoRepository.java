@@ -5,18 +5,24 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Repository
 public class ProjetoRepository {
 
-    private Map<String, Projeto> projetos;
+    private Map<Integer, Projeto> projetos;
 
-    public ProjetoRepository() {
-        this.projetos = new HashMap<String, Projeto>();
-    }
+    public ProjetoRepository() {this.projetos = new HashMap<Integer, Projeto>();}
 
-    public void addProjeto(Projeto projeto) {
-        this.projetos.put(projeto.getNome(), projeto);
+    //numero 200 deve ser ajustado de acordo com a regra de negocios
+    public int addProjeto(Projeto projeto) {
+        Random random = new Random();
+
+        Integer key = random.nextInt(200);
+        this.projetos.put(key, projeto);
+
+        return key;
+
     }
 
     public boolean containsProjectname(String projectname) {
