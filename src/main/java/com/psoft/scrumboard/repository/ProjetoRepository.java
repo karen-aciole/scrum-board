@@ -25,16 +25,24 @@ public class ProjetoRepository {
 
     }
 
-    public boolean containsProjectname(String projectname) {
-        return this.projetos.containsKey(projectname);
+    public boolean containsProjectKey(Integer projectKey) {
+        return this.projetos.containsKey(projectKey);
     }
 
-    public Projeto getProjeto(String projectname) {
-        return this.projetos.get(projectname);
+    public Projeto getProjeto(Integer projectKey) {
+        return this.projetos.get(projectKey);
     }
 
-    public void delProject(String projectname) {
-        this.projetos.remove(projectname);
+    public void delProject(Integer projectKey) {
+        this.projetos.remove(projectKey);
     }
 
+    public boolean containsProjectname(String projectName) {
+        for (Projeto projeto: projetos.values()){
+            if(projeto.getNome().equals(projectName)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

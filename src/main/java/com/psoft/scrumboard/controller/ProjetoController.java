@@ -25,61 +25,58 @@ public class ProjetoController {
     @RequestMapping(value = "/projeto/", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraProjeto(@RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
 
-        if (this.projetoService.contemProjectname(projetoDTO.getNome())) {
-            return new ResponseEntity<String>("Projeto já cadastrado no sistema - projectname não disponível", HttpStatus.CONFLICT);
-        }
         
         if (!(this.usuarioService.contemUsername(projetoDTO.getScrumMasterName()))) {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 
-        String projectname = this.projetoService.criaProjeto(projetoDTO);
+        int projectname = this.projetoService.criaProjeto(projetoDTO);
 
-        return new ResponseEntity<String>("Projeto cadastrado com nome '" + projectname + "'", HttpStatus.CREATED);
+        return new ResponseEntity<String>("Projeto cadastrado com chave = '" + projectname + "'", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/projeto/{projectname}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoProjeto(@PathVariable String projectname) {
+    @RequestMapping(value = "/projeto/{projectKey}", method = RequestMethod.GET)
+    public ResponseEntity<?> acessaInfoProjeto(@PathVariable Integer projectKey) {
 
-        if (!(this.projetoService.contemProjectname(projectname))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectname inválido", HttpStatus.CONFLICT);
+        if (!(this.projetoService.contemProjectKey(projectKey))) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectKey inválido", HttpStatus.CONFLICT);
         }
 
-        String info = this.projetoService.getInfoProjeto(projectname);
+        String info = this.projetoService.getInfoProjeto(projectKey);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
 
-    @RequestMapping(value = "/projeto/{projectname}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeProjeto(@PathVariable String projectname) {
+    @RequestMapping(value = "/projeto/{projectKey}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeProjeto(@PathVariable Integer projectKey) {
 
-        if (!(this.projetoService.contemProjectname(projectname))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectname inválido", HttpStatus.CONFLICT);
+        if (!(this.projetoService.contemProjectKey(projectKey))) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectKey inválido", HttpStatus.CONFLICT);
         }
 
-        String info = this.projetoService.deletaProjeto(projectname);
+        String info = this.projetoService.deletaProjeto(projectKey);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/projeto/{projectname}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaInfoProjeto(@PathVariable String projectname, @RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
+    @RequestMapping(value = "/projeto/{projectKey}", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizaInfoProjeto(@PathVariable Integer projectKey, @RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
 
-        if (!(this.projetoService.contemProjectname(projectname))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectname inválido", HttpStatus.CONFLICT);
+        if (!(this.projetoService.contemProjectKey(projectKey))) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - projectKey inválido", HttpStatus.CONFLICT);
         }
 
         if (!(this.usuarioService.contemUsername(projetoDTO.getScrumMasterName()))) {
             return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
         }
 
-        if (!this.projetoService.getScrumMasterName(projectname).equals(projetoDTO.getScrumMasterName())) {
+        if (!this.projetoService.getScrumMasterName(projectKey).equals(projetoDTO.getScrumMasterName())) {
             return new ResponseEntity<String>("O Scrum master informado nao pertence ao projeto em questao", HttpStatus.CONFLICT);
         }
 
 
-        String info = this.projetoService.updateInfoProjeto(projectname, projetoDTO);
+        String info = this.projetoService.updateInfoProjeto(projectKey, projetoDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
