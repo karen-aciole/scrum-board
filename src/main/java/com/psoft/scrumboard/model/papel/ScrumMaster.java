@@ -1,9 +1,11 @@
 package com.psoft.scrumboard.model.papel;
 
+import com.psoft.scrumboard.model.papel.enums.PapelEnum;
+
 public class ScrumMaster implements Papel {
-	
-	public String getTipo() {
-		return "Scrum Master";
+
+	public PapelEnum getTipo() {
+		return PapelEnum.SCRUM_MASTER;
 	}
 	
 }

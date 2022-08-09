@@ -9,22 +9,23 @@ import com.psoft.scrumboard.model.papel.Papel;
 import com.psoft.scrumboard.model.papel.Pesquisador;
 import com.psoft.scrumboard.model.papel.ProductOwner;
 import com.psoft.scrumboard.model.papel.ScrumMaster;
+import com.psoft.scrumboard.model.papel.enums.PapelEnum;
 
 public class PapelRepository {
 	
-	private Map<Integer, Papel> papeis;
+	private Map<PapelEnum, Papel> papeis;
 	
 	public PapelRepository() {
-		this.papeis = new HashMap<Integer, Papel>();
-		this.papeis.put(0, new ScrumMaster());
-		this.papeis.put(1, new ProductOwner());
-		this.papeis.put(2, new Pesquisador());
-		this.papeis.put(3, new Desenvolvedor());
-		this.papeis.put(4, new Estagiario());
+		this.papeis = new HashMap<PapelEnum, Papel>();
+		this.papeis.put(PapelEnum.SCRUM_MASTER, new ScrumMaster());
+		this.papeis.put(PapelEnum.PRODUCT_OWNER, new ProductOwner());
+		this.papeis.put(PapelEnum.PESQUISADOR, new Pesquisador());
+		this.papeis.put(PapelEnum.DESENVOLVEDOR, new Desenvolvedor());
+		this.papeis.put(PapelEnum.ESTAGIARIO, new Estagiario());
 	}
 	
-	public Papel getPapelByID(Integer id) {
-		return this.papeis.get(id);
+	public Papel getPapelByEnum(PapelEnum papel) {
+		return this.papeis.get(papel);
 	}
 
 }
