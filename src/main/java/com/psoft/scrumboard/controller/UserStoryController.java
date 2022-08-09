@@ -22,7 +22,7 @@ public class UserStoryController {
     private ProjetoService projetoService;
 
     @RequestMapping(value = "/userstory/", method = RequestMethod.POST)
-    public ResponseEntity<?> cadastraUserStory(@RequestParam Integer projectKey, @RequestBody UserStoryDTO userStoryDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
 
         if (this.userStoryService.contemUserStory(projectKey, userStoryDTO.getId())) {
             return new ResponseEntity<String>("UserStory já cadastrada no sistema - número não disponível", HttpStatus.CONFLICT);
@@ -33,8 +33,8 @@ public class UserStoryController {
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory) {
+    @RequestMapping(value = "/userstory/", method = RequestMethod.GET)
+    public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @RequestParam Integer idUserStory) {
 
         if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
