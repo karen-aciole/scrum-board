@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.psoft.scrumboard.dto.UsuarioDTO;
 import com.psoft.scrumboard.service.UsuarioService;
@@ -49,12 +48,12 @@ public class UsuarioController {
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.PUT)
 	public ResponseEntity<?> atualizaInfoUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-		
+
 		if (!(this.usuarioService.contemUsername(usuarioDTO.getUsername()))) {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 		
-		String info = this.usuarioService.updateInfoUsuario(usuarioDTO);
+		String info = this.usuarioService.updateInfoUsuario(usuarioDTO.getUsername(), usuarioDTO.getNomeCompleto(), usuarioDTO.getEmail(), usuarioDTO.getSenha());
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);
 	}
