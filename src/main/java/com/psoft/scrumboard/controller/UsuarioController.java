@@ -24,7 +24,7 @@ public class UsuarioController {
 	private UsuarioService usuarioService;
 	
 	@RequestMapping(value = "/usuario/", method = RequestMethod.POST)
-	public ResponseEntity<?> cadastraUsuario(@RequestBody UsuarioDTO usuarioDTO, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> cadastraUsuario(@RequestBody UsuarioDTO usuarioDTO) {
 		
 		if (this.usuarioService.contemUsername(usuarioDTO.getUsername())) {
 			return new ResponseEntity<String>("Usuário já cadastrado no sistema - username não disponível", HttpStatus.CONFLICT);
@@ -48,7 +48,7 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.PUT)
-	public ResponseEntity<?> atualizaInfoUsuario(@RequestBody UsuarioDTO usuarioDTO, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> atualizaInfoUsuario(@RequestBody UsuarioDTO usuarioDTO) {
 		
 		if (!(this.usuarioService.contemUsername(usuarioDTO.getUsername()))) {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
