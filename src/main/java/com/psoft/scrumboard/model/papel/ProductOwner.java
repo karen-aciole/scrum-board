@@ -1,9 +1,11 @@
 package com.psoft.scrumboard.model.papel;
 
+import com.psoft.scrumboard.model.papel.enums.PapelEnum;
+
 public class ProductOwner implements Papel {
-	
-	public String getTipo() {
-		return "Product Owner";
+
+	public PapelEnum getTipo() {
+		return PapelEnum.PRODUCT_OWNER;
 	}
 	
 }

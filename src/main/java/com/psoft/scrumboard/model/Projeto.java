@@ -66,6 +66,10 @@ public class Projeto {
     	return this.integranteRepository.containsUsername(username);
     }
 
+    public void adicionaIntegrante(Integrante integrante){
+        this.integranteRepository.addIntegrante(integrante);
+    }
+
     public String toString() {
 
         String userInfo = "Informações do projeto de nome '" + this.nome + "'\n"

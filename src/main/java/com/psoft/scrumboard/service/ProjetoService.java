@@ -1,10 +1,13 @@
 package com.psoft.scrumboard.service;
 
+import com.psoft.scrumboard.dto.AdicionaIntegranteDTO;
 import com.psoft.scrumboard.dto.ProjetoDTO;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Usuario;
+import com.psoft.scrumboard.model.papel.Desenvolvedor;
 import com.psoft.scrumboard.model.papel.Papel;
+import com.psoft.scrumboard.model.papel.enums.PapelEnum;
 import com.psoft.scrumboard.repository.PapelRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UsuarioRepository;
@@ -26,7 +29,7 @@ public class ProjetoService {
 
     public int criaProjeto(ProjetoDTO projetoDTO) {
         Usuario scrumMasterUsuario = usuarioRepository.getUser(projetoDTO.getScrumMasterName());
-        Papel scrumMasterPapel = this.papelRepository.getPapelByID(0);
+        Papel scrumMasterPapel = this.papelRepository.getPapelByEnum(PapelEnum.SCRUM_MASTER);
         Integrante scrumMaster = new Integrante(scrumMasterUsuario, scrumMasterPapel);
     	
     	Projeto projeto = new Projeto(projetoDTO.getNome(),
@@ -40,8 +43,22 @@ public class ProjetoService {
         return this.projetoRepository.containsProjectname(projectName);
     }
 
+
+    public String adicionaDesenvolvedor(AdicionaIntegranteDTO adicionaIntegranteDTO){
+        Usuario desenvolvedorUsuario = usuarioRepository.getUser(adicionaIntegranteDTO.getUserName());
+        Papel desenvolvedorPapel = this.papelRepository.getPapelByEnum(adicionaIntegranteDTO.getPapel());
+        Integrante desenvolvedor = new Integrante(desenvolvedorUsuario, desenvolvedorPapel);
+
+        Projeto projeto = this.projetoRepository.getProjeto(adicionaIntegranteDTO.getProjectKey());
+        projeto.adicionaIntegrante(desenvolvedor);
+
+        return projeto.getNome();
+    }
+
+
     public boolean contemProjectKey(Integer projectKey) {
         return this.projetoRepository.containsProjectKey(projectKey);
+
     }
 
     public String getInfoProjeto(Integer projectKey) {

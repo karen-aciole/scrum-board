@@ -31,4 +31,5 @@ public class IntegranteRepository {
 		this.integrantes.remove(username);
 	}
 
+
 }

@@ -1,9 +1,11 @@
 package com.psoft.scrumboard.model.papel;
 
+import com.psoft.scrumboard.model.papel.enums.PapelEnum;
+
 public class Estagiario implements Papel {
-	
-	public String getTipo() {
-		return "Estagiario";
+
+	public PapelEnum getTipo() {
+		return PapelEnum.ESTAGIARIO;
 	}
 	
 }
