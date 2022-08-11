@@ -54,7 +54,7 @@ public class UserStory {
 
     public String toString() {
         return "Informações da UserStory '" + this.titulo + "' - US" + this.getId() + "\n"
-                + "Descrição: " + this.descricao + "\n"
+                + "Descrição: " + this.getDescricao() + "\n"
                 + "Estágio de desenvolvimento: " + this.estagioDesenvolvimento.getTipo();
     }
 
