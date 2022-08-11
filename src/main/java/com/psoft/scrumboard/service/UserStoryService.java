@@ -31,7 +31,8 @@ public class UserStoryService {
     			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(EstagioDesenvolvimentoEnum.TO_DO);
     			
     	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
-                userStoryDTO.getDescricao());
+                userStoryDTO.getDescricao(),
+                estagioDesenvolvimento);
     	
     	Projeto projeto = this.projetoRepository.getProjeto(projectKey);
 
@@ -53,7 +54,6 @@ public class UserStoryService {
     }
 
     public String updateInfoUserStory(Integer projectKey, UserStoryDTO userStoryDTO) {
-        UserStory userStory;
 
         if (!contemUserStory(projectKey, userStoryDTO.getId())) {
             return "UserStory não encontrada";

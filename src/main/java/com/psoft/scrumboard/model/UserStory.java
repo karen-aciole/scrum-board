@@ -12,15 +12,15 @@ public class UserStory {
     
     private String descricao;
     
-    private EstagioDesenvolvimentoEnum estagioDesenvolvimento;
+    private EstagioDesenvolvimento estagioDesenvolvimento;
     
     private IntegranteRepository responsaveis;
 
-    public UserStory(Integer id, String titulo, String descricao) {
+    public UserStory(Integer id, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
-        this.estagioDesenvolvimento = EstagioDesenvolvimentoEnum.TO_DO;
+        this.estagioDesenvolvimento = estagioDesenvolvimento;
         this.responsaveis = new IntegranteRepository();
     }
 
@@ -41,10 +41,10 @@ public class UserStory {
     }
 
     public EstagioDesenvolvimentoEnum getEstagioDesenvolvimento() {
-        return this.estagioDesenvolvimento;
+        return this.estagioDesenvolvimento.getTipo();
     }
 
-    public void setEstagioDesenvolvimentoEnum (EstagioDesenvolvimentoEnum estagioDesenvolvimento) {
+    public void setEstagioDesenvolvimentoEnum (EstagioDesenvolvimento estagioDesenvolvimento) {
         this.estagioDesenvolvimento = estagioDesenvolvimento;
     }
     
