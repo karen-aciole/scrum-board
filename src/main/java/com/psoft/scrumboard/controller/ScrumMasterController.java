@@ -12,11 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 
 public class ScrumMasterController {
-    @Autowired
-    private UserStoryService userStoryService;
 
-    @Autowired
-    private ProjetoService projetoService;
 
     @RequestMapping(value = "/scrummaster/papeisDisponiveis", method = RequestMethod.GET)
     public ResponseEntity<?> listaPapeis() {

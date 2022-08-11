@@ -1,6 +1,6 @@
 package com.psoft.scrumboard.controller;
 
-import com.psoft.scrumboard.dto.ScrumMasterAtribuiUserStoryDTO;
+import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
@@ -70,44 +70,21 @@ public class UserStoryController {
     }
     
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}/responsaveis/", method = RequestMethod.POST)
-    public ResponseEntity<?> participaDesenvolvimentoUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestParam String responsavelUsername) {
+    public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
 
-    	if (!(this.projetoService.contemProjectKey(projectKey))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido", HttpStatus.CONFLICT);
-        }
+
     	
-    	if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
-            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto", HttpStatus.CONFLICT);
-        }
-    	
-    	if (!(this.projetoService.contemIntegrante(projectKey, responsavelUsername))) {
-            return new ResponseEntity<String>("Usuário não é integrante deste projeto", HttpStatus.CONFLICT);
-        }
-    	
-    	String info = this.userStoryService.atribuiUsuarioUserStory(projectKey, idUserStory, responsavelUsername);
+    	String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
     	
     	return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/scrumMaster/", method = RequestMethod.POST)
-    public ResponseEntity<?> atribuiUserStory(@RequestBody ScrumMasterAtribuiUserStoryDTO atribuiUserStoryDTO) {
+    @RequestMapping(value = "/userStory/scrumMasterAtribuiUserStory", method = RequestMethod.POST)
+    public ResponseEntity<?> scrumMasteratribuiUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO, @RequestParam String scrumMasterUserName) {
 
-        if (!(this.projetoService.contemProjectKey(atribuiUserStoryDTO.getProjectKey()))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido", HttpStatus.CONFLICT);
-        }
-
-        if (!(this.userStoryService.contemUserStory(atribuiUserStoryDTO.getProjectKey(), atribuiUserStoryDTO.getIdUserStory()))) {
-            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto", HttpStatus.CONFLICT);
-        }
-
-        if (!(this.projetoService.contemIntegrante(atribuiUserStoryDTO.getProjectKey(), atribuiUserStoryDTO.getUsername()))) {
-            return new ResponseEntity<String>("Usuário não é integrante deste projeto", HttpStatus.CONFLICT);
-        }
-
-        String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
+        String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, scrumMasterUserName);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
-
 
 }

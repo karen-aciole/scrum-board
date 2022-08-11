@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.service;
 
+import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
@@ -19,6 +20,9 @@ public class UserStoryService {
 	
 	@Autowired
 	private ProjetoRepository projetoRepository;
+
+    @Autowired
+    private ProjetoService projetoService;
 
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) {
     	
@@ -85,16 +89,48 @@ public class UserStoryService {
     	
     }
     
-    public String atribuiUsuarioUserStory(Integer projectKey, Integer idUserStory, String responsavelUsername) {
-    	Integrante integrante = this.projetoRepository.getProjeto(projectKey).getIntegranteRepository().getIntegrante(responsavelUsername);
+    public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory) {
+        if (!(this.projetoService.contemProjectKey(atribuiUserStory.getProjectKey()))) {
+            return "Projeto não está cadastrado no sistema - nome inválido";
+        }
+
+        if (!(contemUserStory(atribuiUserStory.getProjectKey(), atribuiUserStory.getIdUserStory()))) {
+            return "UserStory não está cadastrada neste projeto";
+        }
+
+        if (!(this.projetoService.contemIntegrante(atribuiUserStory.getProjectKey(), atribuiUserStory.getUsername()))) {
+            return "Usuário não é integrante deste projeto";
+        }
+
+        Integrante integrante = this.projetoRepository.getProjeto(atribuiUserStory.getProjectKey()).getIntegranteRepository().getIntegrante(atribuiUserStory.getUsername());
+
+        if (usuarioTemPapelPermitido(integrante)) {
+            this.projetoRepository.getProjeto(atribuiUserStory.getProjectKey()).getUserStoryRepository().getUserStory(atribuiUserStory.getIdUserStory()).getResponsaveis().addIntegrante(integrante);
+            return integrante.getUsuario().getUsername();
+        } else {
+            return "Usuário não possui um tipo de papel permitido";
+        }
     	
-    	if (usuarioTemPapelPermitido(integrante)) {
-    		this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(idUserStory).getResponsaveis().addIntegrante(integrante);
-    		return integrante.getUsuario().getUsername();
-    	} else {
-    		return "Usuário não possui um tipo de papel permitido";
-    	}
-    	
+    }
+
+    public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String userStoryName) {
+        if (!(this.projetoService.contemProjectKey(atribuiUserStory.getProjectKey()))) {
+            return "Projeto não está cadastrado no sistema - nome inválido";
+        }
+
+        if (!(contemUserStory(atribuiUserStory.getProjectKey(), atribuiUserStory.getIdUserStory()))) {
+            return "UserStory não está cadastrada neste projeto";
+        }
+
+        if (!(this.projetoService.contemIntegrante(atribuiUserStory.getProjectKey(), atribuiUserStory.getUsername()))) {
+            return "Usuário não é integrante deste projeto";
+        }
+
+        if (!(this.projetoService.getScrumMasterName(atribuiUserStory.getProjectKey()).equals(userStoryName))) {
+            return "O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto";
+        }
+
+        return atribuiUsuarioUserStory(atribuiUserStory);
     }
     
 }

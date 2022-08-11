@@ -1,13 +1,13 @@
 package com.psoft.scrumboard.dto;
 
-public class ScrumMasterAtribuiUserStoryDTO {
+public class AtribuiUserStoryDTO {
 
     Integer projectKey;
     Integer idUserStory;
     String username;
     String scrumMasterName;
 
-    public ScrumMasterAtribuiUserStoryDTO(Integer projectKey, Integer idUserStory, String username, String scrumMasterName){
+    public AtribuiUserStoryDTO(Integer projectKey, Integer idUserStory, String username, String scrumMasterName){
         this.idUserStory = idUserStory;
         this.scrumMasterName = scrumMasterName;
         this.username = username;

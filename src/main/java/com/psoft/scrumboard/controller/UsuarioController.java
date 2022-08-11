@@ -1,5 +1,7 @@
 package com.psoft.scrumboard.controller;
 
+import com.psoft.scrumboard.service.ProjetoService;
+import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,12 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+
+	@Autowired
+	private UserStoryService userStoryService;
+
+	@Autowired
+	private ProjetoService projetoService;
 	
 	@RequestMapping(value = "/usuario/", method = RequestMethod.POST)
 	public ResponseEntity<?> cadastraUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -69,5 +77,6 @@ public class UsuarioController {
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);		
 	}
+
 
 }
