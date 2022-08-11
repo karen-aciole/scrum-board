@@ -46,6 +46,10 @@ public class ProjetoController {
             return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
         }
 
+        if (!(this.projetoService.getScrumMasterName(adicionaIntegranteDTO.getProjectKey()).equals(adicionaIntegranteDTO.getScrumMasterName()))) {
+            return new ResponseEntity<String>("Scrum Master não pertence a esse projeto", HttpStatus.CONFLICT);
+        }
+
         String projectname = this.projetoService.adicionaDesenvolvedor(adicionaIntegranteDTO);
 
         return new ResponseEntity<String>("Integrante cadastrado com name '" + adicionaIntegranteDTO.getUserName() + "'", HttpStatus.CREATED);

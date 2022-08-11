@@ -7,6 +7,7 @@ import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
+import com.psoft.scrumboard.model.enums.PapelEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
@@ -84,9 +85,9 @@ public class UserStoryService {
     
     private boolean usuarioTemPapelPermitido(Integrante integrante) {
     	
-    	if (integrante.getPapel().getTipo().equals("Pesquisador")
-    			|| integrante.getPapel().getTipo().equals("Desenvolvedor")
-    			|| integrante.getPapel().getTipo().equals("Estagiario")) {
+    	if (integrante.getPapel().getTipo().equals(PapelEnum.PESQUISADOR)
+    			|| integrante.getPapel().getTipo().equals(PapelEnum.DESENVOLVEDOR)
+    			|| integrante.getPapel().getTipo().equals(PapelEnum.ESTAGIARIO)) {
     		return true;
     	} else {
     		return false;
@@ -111,7 +112,7 @@ public class UserStoryService {
 
         if (usuarioTemPapelPermitido(integrante)) {
             this.projetoRepository.getProjeto(atribuiUserStory.getProjectKey()).getUserStoryRepository().getUserStory(atribuiUserStory.getIdUserStory()).getResponsaveis().addIntegrante(integrante);
-            return integrante.getUsuario().getUsername();
+            return integrante.getUsuario().getUsername() + "recebeu a atribuição com sucesso";
         } else {
             return "Usuário não possui um tipo de papel permitido";
         }

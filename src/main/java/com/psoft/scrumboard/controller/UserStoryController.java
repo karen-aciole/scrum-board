@@ -22,7 +22,7 @@ public class UserStoryController {
     @Autowired
     private ProjetoService projetoService;
 
-    @RequestMapping(value = "/userstory/", method = RequestMethod.POST)
+    @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
 
         if (this.userStoryService.contemUserStory(projectKey, userStoryDTO.getId())) {
@@ -70,7 +70,7 @@ public class UserStoryController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}/responsaveis/", method = RequestMethod.POST)
+    @RequestMapping(value = "/userstory/participaDesenvolvedor", method = RequestMethod.POST)
     public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
 
     	String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
@@ -79,9 +79,9 @@ public class UserStoryController {
     }
 
     @RequestMapping(value = "/userStory/scrumMasterAtribuiUserStory", method = RequestMethod.POST)
-    public ResponseEntity<?> scrumMasteratribuiUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO, @RequestParam String scrumMasterUserName) {
+    public ResponseEntity<?> scrumMasteratribuiUserStoryAIntegrante(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
 
-        String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, scrumMasterUserName);
+        String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, atribuiUserStoryDTO.getScrumMasterName());
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
