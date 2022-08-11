@@ -158,7 +158,7 @@ public class UserStoryService {
         UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
 
         if (!(this.projetoService.getScrumMasterName(mudaStatus.getProjectKey()).equals(mudaStatus.getUsername())) || !us.getResponsaveis().containsUsername(mudaStatus.getUsername())) {
-            return "O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto";
+            return "O Scrum Master informado não possui autorização para mudar status nesse projeto";
         }
 
         if (!us.getEstagioDesenvolvimento().equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS))) {
@@ -180,5 +180,27 @@ public class UserStoryService {
 
         return "Status alterado com sucesso";
     }
-    
+
+    public String mudaStatusToVerifyParaDone(MudaStatusDTO mudaStatus) {
+        if (!(this.projetoService.contemProjectKey(mudaStatus.getProjectKey()))) {
+            return "Projeto não está cadastrado no sistema - nome inválido";
+        }
+
+        if (!(contemUserStory(mudaStatus.getProjectKey(), mudaStatus.getIdUserStory()))) {
+            return "UserStory não está cadastrada neste projeto";
+        }
+
+        Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
+        UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
+
+        if (!(this.projetoService.getScrumMasterName(mudaStatus.getProjectKey()).equals(mudaStatus.getUsername())) || !us.getResponsaveis().containsUsername(mudaStatus.getUsername())) {
+            return "O Scrum Master informado não possui autorização para mudar status nesse Projeto.";
+        }
+
+        if (!us.getEstagioDesenvolvimento().equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_VERIFY))) {
+            return "A US não se encontra no estágio de desenvolvimento 'To Verify'";
+        }
+
+        return mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.DONE);
+    }
 }

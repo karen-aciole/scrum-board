@@ -89,9 +89,15 @@ public class UserStoryController {
     @RequestMapping(value = "/usuario/", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody MudaStatusDTO mudaStatusDTO) {
 
-
-
         String info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/usuario/", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) {
+
+        String info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
