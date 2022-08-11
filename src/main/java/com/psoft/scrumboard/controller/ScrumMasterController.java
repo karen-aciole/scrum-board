@@ -1,6 +1,5 @@
 package com.psoft.scrumboard.controller;
 
-import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,27 +38,5 @@ public class ScrumMasterController {
 
         return new ResponseEntity<String>(estagiosDesenvolvimento, HttpStatus.OK);
     }
-
-    @RequestMapping(value = "/scrumMaster/", method = RequestMethod.POST)
-    public ResponseEntity<?> atribuiUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
-
-        if (!(this.projetoService.contemProjectKey(atribuiUserStoryDTO.getProjectKey()))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido", HttpStatus.CONFLICT);
-        }
-
-        if (!(this.userStoryService.contemUserStory(atribuiUserStoryDTO.getProjectKey(), atribuiUserStoryDTO.getIdUserStory()))) {
-            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto", HttpStatus.CONFLICT);
-        }
-
-        if (!(this.projetoService.contemIntegrante(atribuiUserStoryDTO.getProjectKey(), atribuiUserStoryDTO.getUsername()))) {
-            return new ResponseEntity<String>("Usuário não é integrante deste projeto", HttpStatus.CONFLICT);
-        }
-
-        String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
-
-        return new ResponseEntity<String>(info, HttpStatus.OK);
-    }
-
-
 
 }
