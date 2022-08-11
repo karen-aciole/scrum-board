@@ -111,8 +111,12 @@ public class UserStoryService {
         Integrante integrante = this.projetoRepository.getProjeto(atribuiUserStory.getProjectKey()).getIntegranteRepository().getIntegrante(atribuiUserStory.getUsername());
 
         if (usuarioTemPapelPermitido(integrante)) {
-            this.projetoRepository.getProjeto(atribuiUserStory.getProjectKey()).getUserStoryRepository().getUserStory(atribuiUserStory.getIdUserStory()).getResponsaveis().addIntegrante(integrante);
-            return integrante.getUsuario().getUsername() + "recebeu a atribuição com sucesso";
+            this.projetoRepository.getProjeto(atribuiUserStory.getProjectKey())
+                    .getUserStoryRepository()
+                    .getUserStory(atribuiUserStory.getIdUserStory())
+                    .getResponsaveis()
+                    .addIntegrante(integrante);
+            return integrante.getUsuario().getUsername() + " recebeu a atribuição com sucesso";
         } else {
             return "Usuário não possui um tipo de papel permitido";
         }

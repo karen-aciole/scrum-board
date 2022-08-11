@@ -34,7 +34,7 @@ public class UserStoryController {
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/userstory/", method = RequestMethod.GET)
+    @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.GET)
     public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @RequestParam Integer idUserStory) {
 
         if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
@@ -78,7 +78,7 @@ public class UserStoryController {
     	return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userStory/scrumMasterAtribuiUserStory", method = RequestMethod.POST)
+    @RequestMapping(value = "/userstory/scrumMasterAtribuiUserStory", method = RequestMethod.POST)
     public ResponseEntity<?> scrumMasteratribuiUserStoryAIntegrante(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
 
         String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, atribuiUserStoryDTO.getScrumMasterName());
@@ -86,7 +86,7 @@ public class UserStoryController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/usuario/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/userstory/mudaStatusWorkInProgressparaToVerify", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody MudaStatusDTO mudaStatusDTO) {
 
         String info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
@@ -94,7 +94,7 @@ public class UserStoryController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/usuario/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/userstory/mudaStatusToVerifyParaDone", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) {
 
         String info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
