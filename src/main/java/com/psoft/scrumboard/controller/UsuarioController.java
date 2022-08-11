@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.MudaStatusDTO;
+import com.psoft.scrumboard.exception.UsuarioAlreadyExistsException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,14 @@ public class UsuarioController {
 	
 	@RequestMapping(value = "/usuario/", method = RequestMethod.POST)
 	public ResponseEntity<?> cadastraUsuario(@RequestBody UsuarioDTO usuarioDTO) {
-		
-		if (this.usuarioService.contemUsername(usuarioDTO.getUsername())) {
+		String username;
+
+		try {
+			username = this.usuarioService.criaUsuario(usuarioDTO);
+		} catch (UsuarioAlreadyExistsException e) {
 			return new ResponseEntity<String>("Usuário já cadastrado no sistema - username não disponível", HttpStatus.CONFLICT);
 		}
-		
-		String username = this.usuarioService.criaUsuario(usuarioDTO);
-		
+
 		return new ResponseEntity<String>("Usuário cadastrado com username '" + username + "'", HttpStatus.CREATED);
 	}
 	

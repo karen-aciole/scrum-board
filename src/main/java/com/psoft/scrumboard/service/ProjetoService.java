@@ -49,7 +49,7 @@ public class ProjetoService {
     }
 
 
-    public String adicionaDesenvolvedor(AdicionaIntegranteDTO adicionaIntegranteDTO){
+    public String adicionaDesenvolvedor(AdicionaIntegranteDTO adicionaIntegranteDTO) {
         Usuario desenvolvedorUsuario = usuarioRepository.getUser(adicionaIntegranteDTO.getUserName());
         Papel desenvolvedorPapel = this.papelRepository.getPapelByEnum(adicionaIntegranteDTO.getPapel());
         Integrante desenvolvedor = new Integrante(desenvolvedorUsuario, desenvolvedorPapel);
