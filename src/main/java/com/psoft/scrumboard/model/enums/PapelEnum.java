@@ -1,4 +1,4 @@
-package com.psoft.scrumboard.model.papel.enums;
+package com.psoft.scrumboard.model.enums;
 
 public enum PapelEnum {
     DESENVOLVEDOR,

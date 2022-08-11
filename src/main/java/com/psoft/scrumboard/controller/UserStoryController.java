@@ -72,8 +72,6 @@ public class UserStoryController {
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}/responsaveis/", method = RequestMethod.POST)
     public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
 
-
-    	
     	String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
     	
     	return new ResponseEntity<String>(info, HttpStatus.OK);

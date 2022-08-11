@@ -9,7 +9,7 @@ import com.psoft.scrumboard.model.papel.Papel;
 import com.psoft.scrumboard.model.papel.Pesquisador;
 import com.psoft.scrumboard.model.papel.ProductOwner;
 import com.psoft.scrumboard.model.papel.ScrumMaster;
-import com.psoft.scrumboard.model.papel.enums.PapelEnum;
+import com.psoft.scrumboard.model.enums.PapelEnum;
 
 public class PapelRepository {
 	
