@@ -31,8 +31,7 @@ public class UserStoryService {
     			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(EstagioDesenvolvimentoEnum.TO_DO);
     			
     	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
-                userStoryDTO.getDescricao(),
-                estagioDesenvolvimento);
+                userStoryDTO.getDescricao());
     	
     	Projeto projeto = this.projetoRepository.getProjeto(projectKey);
 
@@ -59,9 +58,11 @@ public class UserStoryService {
         if (!contemUserStory(projectKey, userStoryDTO.getId())) {
             return "UserStory não encontrada";
         } else {
-            userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
-                    userStoryDTO.getDescricao(),
-                    null); // futuramente remover essa linha do UserStoryDTO
+
+            UserStory userStory = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(userStoryDTO.getId());
+
+            userStory.setDescricao(userStoryDTO.getDescricao());
+            userStory.setTitulo(userStoryDTO.getTitulo());
 
             this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().addUserStory(userStory);
 

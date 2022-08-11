@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.model;
 
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.IntegranteRepository;
 
@@ -11,15 +12,15 @@ public class UserStory {
     
     private String descricao;
     
-    private EstagioDesenvolvimento estagioDesenvolvimento;
+    private EstagioDesenvolvimentoEnum estagioDesenvolvimento;
     
     private IntegranteRepository responsaveis;
 
-    public UserStory(Integer id, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
+    public UserStory(Integer id, String titulo, String descricao) {
         this.id = id;
         this.titulo = titulo;
         this.descricao = descricao;
-        this.estagioDesenvolvimento = estagioDesenvolvimento; // o estágio é TODO por default
+        this.estagioDesenvolvimento = EstagioDesenvolvimentoEnum.TO_DO;
         this.responsaveis = new IntegranteRepository();
     }
 
@@ -39,11 +40,11 @@ public class UserStory {
         this.descricao = descricao;
     }
 
-    public EstagioDesenvolvimento getEstagioDesenvolvimento() {
+    public EstagioDesenvolvimentoEnum getEstagioDesenvolvimento() {
         return this.estagioDesenvolvimento;
     }
 
-    public void setEstagioDesenvolvimento(EstagioDesenvolvimento estagioDesenvolvimento) {
+    public void setEstagioDesenvolvimentoEnum (EstagioDesenvolvimentoEnum estagioDesenvolvimento) {
         this.estagioDesenvolvimento = estagioDesenvolvimento;
     }
     
@@ -57,4 +58,7 @@ public class UserStory {
                 + "Estágio de desenvolvimento: " + this.estagioDesenvolvimento.getTipo();
     }
 
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 }

@@ -78,5 +78,16 @@ public class UsuarioController {
 		return new ResponseEntity<String>(info, HttpStatus.OK);		
 	}
 
+	@RequestMapping(value = "/usuario/", method = RequestMethod.PUT)
+	public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody UsuarioDTO usuarioDTO) {
+
+		if (!(this.usuarioService.contemUsername(usuarioDTO.getUsername()))) {
+			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		}
+
+		String info = this.usuarioService.updateInfoUsuario(usuarioDTO.getUsername(), usuarioDTO.getNomeCompleto(), usuarioDTO.getEmail(), usuarioDTO.getSenha());
+
+		return new ResponseEntity<String>(info, HttpStatus.OK);
+	}
 
 }
