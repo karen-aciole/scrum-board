@@ -2,6 +2,7 @@ package com.psoft.scrumboard.service;
 
 import com.psoft.scrumboard.dto.AdicionaIntegranteDTO;
 import com.psoft.scrumboard.dto.ProjetoDTO;
+import com.psoft.scrumboard.exception.UsuarioNotFoundException;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Usuario;
@@ -26,8 +27,13 @@ public class ProjetoService {
     @Autowired
     private PapelRepository papelRepository;
 
-    public int criaProjeto(ProjetoDTO projetoDTO) {
+    public int criaProjeto(ProjetoDTO projetoDTO) throws UsuarioNotFoundException {
         Usuario scrumMasterUsuario = usuarioRepository.getUser(projetoDTO.getScrumMasterName());
+
+        if (scrumMasterUsuario == null)
+            throw new UsuarioNotFoundException("Usuário não está cadastrado no sistema - username inválido");
+
+
         Papel scrumMasterPapel = this.papelRepository.getPapelByEnum(PapelEnum.SCRUM_MASTER);
         Integrante scrumMaster = new Integrante(scrumMasterUsuario, scrumMasterPapel);
     	

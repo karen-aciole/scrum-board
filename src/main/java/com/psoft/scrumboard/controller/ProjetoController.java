@@ -2,6 +2,7 @@ package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.AdicionaIntegranteDTO;
 import com.psoft.scrumboard.dto.ProjetoDTO;
+import com.psoft.scrumboard.exception.UsuarioNotFoundException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UsuarioService;
 
@@ -23,14 +24,14 @@ public class ProjetoController {
     private UsuarioService usuarioService;
 
     @RequestMapping(value = "/projeto/", method = RequestMethod.POST)
-    public ResponseEntity<?> cadastraProjeto(@RequestBody ProjetoDTO projetoDTO) {
+    public ResponseEntity<?> cadastraProjeto(@RequestBody ProjetoDTO projetoDTO)  {
+        int projectname;
 
-        
-        if (!(this.usuarioService.contemUsername(projetoDTO.getScrumMasterName()))) {
-			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
-		}
-
-        int projectname = this.projetoService.criaProjeto(projetoDTO);
+        try {
+            projectname = this.projetoService.criaProjeto(projetoDTO);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<String>("Projeto cadastrado com chave = '" + projectname + "'", HttpStatus.CREATED);
     }
