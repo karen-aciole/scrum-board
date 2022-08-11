@@ -5,6 +5,7 @@ import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.UserStory;
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
@@ -27,7 +28,7 @@ public class UserStoryService {
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) {
     	
     	EstagioDesenvolvimento estagioDesenvolvimento =
-    			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(1); // chave 1 está relacionada a ToDo
+    			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(EstagioDesenvolvimentoEnum.TO_DO);
     			
     	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
                 userStoryDTO.getDescricao(),
