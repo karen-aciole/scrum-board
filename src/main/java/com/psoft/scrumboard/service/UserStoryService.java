@@ -174,7 +174,8 @@ public class UserStoryService {
             return "Username informado não possui autorização para mudar status nesse projeto.";
         }
 
-        if (!us.getEstagioDesenvolvimento().equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS))) {
+        if (!us.getEstagioDesenvolvimento().equals(estagioDesenvolvimentoRepository
+                .getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS))) {
             return "A US não se encontra no estágio de desenvolvimento 'work in progress'";
         }
 
