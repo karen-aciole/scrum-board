@@ -22,7 +22,7 @@ public class EstagioDesenvolvimentoRepository {
 		this.estagiosDesenvolvimento.put(EstagioDesenvolvimentoEnum.DONE, new Done());
 	}
 	
-	public EstagioDesenvolvimento getEstagioDesenvolvimentoByID(EstagioDesenvolvimentoEnum estagio) {
+	public EstagioDesenvolvimento getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum estagio) {
 		return this.estagiosDesenvolvimento.get(estagio);
 	}
 

@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.service;
 
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
+import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
@@ -12,6 +13,8 @@ import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+
 
 @Service
 public class UserStoryService {
@@ -28,7 +31,7 @@ public class UserStoryService {
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) {
     	
     	EstagioDesenvolvimento estagioDesenvolvimento =
-    			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByID(EstagioDesenvolvimentoEnum.TO_DO);
+    			this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_DO);
     			
     	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
                 userStoryDTO.getDescricao(),
@@ -133,6 +136,48 @@ public class UserStoryService {
         }
 
         return atribuiUsuarioUserStory(atribuiUserStory);
+    }
+
+    public String mudaStatusWorkInProgressParaToVerify(MudaStatusDTO mudaStatus) {
+
+        if (!(this.projetoService.contemProjectKey(mudaStatus.getProjectKey()))) {
+            return "Projeto não está cadastrado no sistema - nome inválido";
+        }
+
+        if (!(contemUserStory(mudaStatus.getProjectKey(), mudaStatus.getIdUserStory()))) {
+            return "UserStory não está cadastrada neste projeto";
+        }
+
+        if (!(this.projetoService.contemIntegrante(mudaStatus.getProjectKey(), mudaStatus.getUsername()))) {
+            return "Usuário não é integrante deste projeto";
+        }
+
+        Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
+
+        UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
+
+        if (!(this.projetoService.getScrumMasterName(mudaStatus.getProjectKey()).equals(mudaStatus.getUsername())) || !us.getResponsaveis().containsUsername(mudaStatus.getUsername())) {
+            return "O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto";
+        }
+
+        if (!us.getEstagioDesenvolvimento().equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS))) {
+            return "A US não se encontra no estágio de desenvolvimento 'work in progess'";
+        }
+
+        return mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.TO_VERIFY);
+    }
+
+    private String mudaStatus(MudaStatusDTO mudaStatus, EstagioDesenvolvimentoEnum estagio) {
+
+        Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
+        UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
+
+        EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(estagio);
+
+        us.setEstagioDesenvolvimentoEnum(estagioDesenvolvimento);
+
+
+        return "Status alterado com sucesso";
     }
     
 }

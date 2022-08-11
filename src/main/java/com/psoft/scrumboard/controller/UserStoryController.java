@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
+import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
@@ -81,6 +82,16 @@ public class UserStoryController {
     public ResponseEntity<?> scrumMasteratribuiUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO, @RequestParam String scrumMasterUserName) {
 
         String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, scrumMasterUserName);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/usuario/", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody MudaStatusDTO mudaStatusDTO) {
+
+
+
+        String info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
