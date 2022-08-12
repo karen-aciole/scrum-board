@@ -3,6 +3,7 @@ package com.psoft.scrumboard.service;
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.exception.UserStoryNotFoundException;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.UserStory;
@@ -57,21 +58,19 @@ public class UserStoryService {
     	return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(idUserStory).toString();
     }
 
-    public String updateInfoUserStory(Integer projectKey, UserStoryDTO userStoryDTO) {
+    public String updateInfoUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryNotFoundException {
 
-        if (!contemUserStory(projectKey, userStoryDTO.getId())) {
-            return "UserStory não encontrada";
-        } else {
+        if (!contemUserStory(projectKey, userStoryDTO.getId())) throw new UserStoryNotFoundException("User Story não encontrado");
 
-            UserStory userStory = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(userStoryDTO.getId());
+        UserStory userStory = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(userStoryDTO.getId());
 
-            userStory.setDescricao(userStoryDTO.getDescricao());
-            userStory.setTitulo(userStoryDTO.getTitulo());
+        userStory.setDescricao(userStoryDTO.getDescricao());
+        userStory.setTitulo(userStoryDTO.getTitulo());
 
-            this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().addUserStory(userStory);
+        this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().addUserStory(userStory);
 
-            return "UserStory atualizado com titulo '" + userStory.getTitulo() + "'";
-        }
+        return "UserStory atualizado com titulo '" + userStory.getTitulo() + "'";
+
     }
 
     public String deletaUserStory(Integer projectKey, Integer idUserStory) {

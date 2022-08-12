@@ -3,6 +3,7 @@ package com.psoft.scrumboard.controller;
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.exception.UserStoryNotFoundException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +60,13 @@ public class UserStoryController {
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestBody UserStoryDTO userStoryDTO) {
-
-        if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
+    public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
+        String info;
+        try {
+            info = this.userStoryService.updateInfoUserStory(projectKey, userStoryDTO);
+        } catch (UserStoryNotFoundException e) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         }
-
-        String info = this.userStoryService.updateInfoUserStory(projectKey, userStoryDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
