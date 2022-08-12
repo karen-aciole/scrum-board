@@ -1,13 +1,15 @@
 package com.psoft.scrumboard.controller;
 
+import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
+import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.exception.UserStoryNotFoundException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api")
@@ -21,7 +23,7 @@ public class UserStoryController {
     @Autowired
     private ProjetoService projetoService;
 
-    @RequestMapping(value = "/userstory/", method = RequestMethod.POST)
+    @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
 
         if (this.userStoryService.contemUserStory(projectKey, userStoryDTO.getId())) {
@@ -33,7 +35,7 @@ public class UserStoryController {
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/userstory/", method = RequestMethod.GET)
+    @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.GET)
     public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @RequestParam Integer idUserStory) {
 
         if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
@@ -58,35 +60,47 @@ public class UserStoryController {
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestBody UserStoryDTO userStoryDTO) {
-
-        if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
+    public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
+        String info;
+        try {
+            info = this.userStoryService.updateInfoUserStory(projectKey, userStoryDTO);
+        } catch (UserStoryNotFoundException e) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         }
-
-        String info = this.userStoryService.updateInfoUserStory(projectKey, userStoryDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}/responsaveis/", method = RequestMethod.POST)
-    public ResponseEntity<?> participaDesenvolvimentoUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestParam String responsavelUsername) {
+    @RequestMapping(value = "/userstory/participaDesenvolvedor", method = RequestMethod.POST)
+    public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
 
-    	if (!(this.projetoService.contemProjectKey(projectKey))) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido", HttpStatus.CONFLICT);
-        }
-    	
-    	if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
-            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto", HttpStatus.CONFLICT);
-        }
-    	
-    	if (!(this.projetoService.contemIntegrante(projectKey, responsavelUsername))) {
-            return new ResponseEntity<String>("Usuário não é integrante deste projeto", HttpStatus.CONFLICT);
-        }
-    	
-    	String info = this.userStoryService.atribuiUsuarioUserStory(projectKey, idUserStory, responsavelUsername);
+    	String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
     	
     	return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userstory/scrumMasterAtribuiUserStory", method = RequestMethod.POST)
+    public ResponseEntity<?> scrumMasterAtribuiUserStoryAIntegrante(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
+
+        String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, atribuiUserStoryDTO.getScrumMasterName());
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userstory/mudaStatusWorkInProgressparaToVerify", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody MudaStatusDTO mudaStatusDTO) {
+
+        String info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userstory/mudaStatusToVerifyParaDone", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) {
+
+        String info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
 }

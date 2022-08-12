@@ -1,9 +1,10 @@
 package com.psoft.scrumboard.model.estagiodesenvolvimento;
 
-public class WorkInProgress implements EstagioDesenvolvimento {
-	
-	public String getTipo() {
-		return "Work in Progress";
-	}
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 
+public class WorkInProgress implements EstagioDesenvolvimento{
+    @Override
+    public EstagioDesenvolvimentoEnum getTipo() {
+        return EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS;
+    }
 }

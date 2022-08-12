@@ -1,5 +1,7 @@
 package com.psoft.scrumboard.service;
 
+import com.psoft.scrumboard.exception.UsuarioAlreadyExistsException;
+import com.psoft.scrumboard.exception.UsuarioNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,10 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	public String criaUsuario(UsuarioDTO usuarioDTO) {
+	public String criaUsuario(UsuarioDTO usuarioDTO) throws UsuarioAlreadyExistsException {
+
+		if (contemUsername(usuarioDTO.getUsername())) throw new UsuarioAlreadyExistsException("Usuário já cadastrado no sistema - username não disponível");
+
 		Usuario usuario = new Usuario(usuarioDTO.getNomeCompleto(),
 				                      usuarioDTO.getUsername(),
 				                      usuarioDTO.getEmail(),

@@ -1,9 +1,10 @@
 package com.psoft.scrumboard.model.estagiodesenvolvimento;
 
-public class Done implements EstagioDesenvolvimento {
-	
-	public String getTipo() {
-		return "Done";
-	}
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 
+public class Done implements EstagioDesenvolvimento{
+
+    public EstagioDesenvolvimentoEnum getTipo() {
+        return EstagioDesenvolvimentoEnum.DONE;
+    }
 }

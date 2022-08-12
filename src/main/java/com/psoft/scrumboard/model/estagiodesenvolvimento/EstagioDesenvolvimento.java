@@ -1,7 +1,7 @@
 package com.psoft.scrumboard.model.estagiodesenvolvimento;
 
-public interface EstagioDesenvolvimento {
-	
-	public String getTipo();
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 
+public interface EstagioDesenvolvimento {
+    public EstagioDesenvolvimentoEnum getTipo();
 }

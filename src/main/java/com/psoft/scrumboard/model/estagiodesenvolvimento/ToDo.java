@@ -1,9 +1,10 @@
 package com.psoft.scrumboard.model.estagiodesenvolvimento;
 
-public class ToDo implements EstagioDesenvolvimento {
-	
-	public String getTipo() {
-		return "TODO";
-	}
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 
+public class ToDo implements EstagioDesenvolvimento{
+    @Override
+    public EstagioDesenvolvimentoEnum getTipo() {
+        return EstagioDesenvolvimentoEnum.TO_DO;
+    }
 }
