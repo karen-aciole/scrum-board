@@ -123,19 +123,16 @@ public class UserStoryService {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
         }
 
-<<<<<<< HEAD
-        if (!(contemUserStory(projetoKey, userStoryId))) {
+        if (!(contemUserStory(projectKey, userStoryId))) {
             return "UserStory não está cadastrada neste projeto";
         }
 
-        if (!(this.projetoService.contemIntegrante(projetoKey, username))) {
+        if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             return "Usuário não é integrante deste projeto";
         }
-        
-        Integrante integrante = this.projetoRepository.getProjeto(projetoKey)
-=======
+
         Integrante integrante = this.projetoRepository.getProjeto(projectKey)
->>>>>>> 062e10483a1c75ae5c75017c18cb1cfca2658cbe
+
                 .getIntegranteRepository()
                 .getIntegrante(username);
 
