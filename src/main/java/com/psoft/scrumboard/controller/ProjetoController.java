@@ -71,7 +71,6 @@ public class ProjetoController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-
     @RequestMapping(value = "/projeto/{projectKey}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeProjeto(@PathVariable Integer projectKey) {
 
