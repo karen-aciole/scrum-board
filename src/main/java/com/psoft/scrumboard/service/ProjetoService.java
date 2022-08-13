@@ -2,7 +2,7 @@ package com.psoft.scrumboard.service;
 
 import com.psoft.scrumboard.dto.AdicionaIntegranteDTO;
 import com.psoft.scrumboard.dto.ProjetoDTO;
-import com.psoft.scrumboard.exception.UsuarioNotFoundException;
+import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Usuario;
@@ -49,12 +49,28 @@ public class ProjetoService {
     }
 
 
-    public String adicionaDesenvolvedor(AdicionaIntegranteDTO adicionaIntegranteDTO) {
-        Usuario desenvolvedorUsuario = usuarioRepository.getUser(adicionaIntegranteDTO.getUserName());
+    public String adicionaDesenvolvedor(AdicionaIntegranteDTO adicionaIntegranteDTO)
+            throws ProjetoNotFoundException, UsuarioAlreadyExistsException, UsuarioNotAllowedException, UsuarioNotFoundException {
+
+        Integer projectKey = adicionaIntegranteDTO.getProjectKey();
+        String username = adicionaIntegranteDTO.getUserName();
+        String scrumMaster = adicionaIntegranteDTO.getScrumMasterName();
+
+        if (!this.projetoRepository.containsProjectKey(projectKey)) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        } else if (!this.usuarioRepository.containsUsername(username)) {
+            throw new UsuarioNotFoundException("Usuário não está cadastrado no sistema - username inválido.");
+        } else if (this.contemIntegrante(projectKey, username)) {
+            throw new UsuarioAlreadyExistsException("Usuário já é integrante deste projeto");
+        } else if (!(this.getScrumMasterName(projectKey).equals(scrumMaster))) {
+            throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para adicionar integrantes neste projeto.");
+        }
+
+        Usuario desenvolvedorUsuario = usuarioRepository.getUser(username);
         Papel desenvolvedorPapel = this.papelRepository.getPapelByEnum(adicionaIntegranteDTO.getPapel());
         Integrante desenvolvedor = new Integrante(desenvolvedorUsuario, desenvolvedorPapel);
 
-        Projeto projeto = this.projetoRepository.getProjeto(adicionaIntegranteDTO.getProjectKey());
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
         projeto.adicionaIntegrante(desenvolvedor);
 
         return projeto.getNome();
@@ -66,11 +82,13 @@ public class ProjetoService {
 
     }
 
-    public String getInfoProjeto(Integer projectKey) {
+    public String getInfoProjeto(Integer projectKey) throws ProjetoNotFoundException {
+        if (!this.projetoRepository.containsProjectKey(projectKey))
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+
         Projeto projeto = this.projetoRepository.getProjeto(projectKey);
 
         return projeto.toString();
-
     }
 
     public String getScrumMasterName(Integer projectKey){
@@ -81,22 +99,35 @@ public class ProjetoService {
         return scrumMastername;
     }
 
-    public String deletaProjeto(Integer projectKey) {
+    public String deletaProjeto(Integer projectKey) throws ProjetoNotFoundException {
+        if (!this.projetoRepository.containsProjectKey(projectKey))
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+
         this.projetoRepository.delProject(projectKey);
 
         return "Projeto removido com nome '" + projectKey + "'";
     }
     
-    public boolean contemIntegrante(Integer nomeProjeto, String username) {
-    	return this.projetoRepository.getProjeto(nomeProjeto).contemIntegrante(username);
+    public boolean contemIntegrante(Integer projectKey, String username) {
+    	return this.projetoRepository.getProjeto(projectKey).contemIntegrante(username);
     }
 
-    public String updateInfoProjeto(Integer key, ProjetoDTO projetoDTO) {
+    public String updateInfoProjeto(Integer key, ProjetoDTO projetoDTO)
+            throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+
+        if (!this.projetoRepository.containsProjectKey(key)) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        } else if (!this.usuarioRepository.containsUsername(projetoDTO.getScrumMasterName())) {
+            throw new UsuarioNotFoundException("Usuário não está cadastrado no sistema - username inválido.");
+        } else if (!(this.getScrumMasterName(key).equals(projetoDTO.getScrumMasterName()))) {
+            throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para adicionar integrantes neste projeto.");
+        }
+
         Projeto projeto = this.projetoRepository.getProjeto(key);
 
-        projeto.setDescricao(projetoDTO.getDescricao());
-        projeto.setName(projetoDTO.getNome());
-        projeto.setInstituicaoParceira(projetoDTO.getInstituicaoParceira());
+        projeto.setDescricao(!projetoDTO.getDescricao().isBlank() ? projetoDTO.getDescricao() : projeto.getDescricao());
+        projeto.setName(!projetoDTO.getNome().isBlank() ? projetoDTO.getNome() : projeto.getNome());
+        projeto.setInstituicaoParceira(!projetoDTO.getInstituicaoParceira().isBlank() ? projetoDTO.getInstituicaoParceira() : projeto.getInstituicaoParceira());
 
         return "Projeto atualizado com nome: '" + projeto.getNome() + "',\ndescricao: '" + projeto.getDescricao() + "'\n" +
                 "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Master: " + projetoDTO.getScrumMasterName();
