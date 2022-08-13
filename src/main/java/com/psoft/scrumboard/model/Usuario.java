@@ -10,16 +10,13 @@ public class Usuario {
 	
 	private String email;
 	
-	private String senha;
-	
 	private Papel papel;
 	
 
-	public Usuario(String nomeCompleto, String username, String email, String senha) {
+	public Usuario(String nomeCompleto, String username, String email) {
 		this.nomeCompleto = nomeCompleto;
 		this.username = username;
 		this.email = email;
-		this.senha = senha;
 	}
 	
 	public Papel getPapel() {
@@ -40,10 +37,6 @@ public class Usuario {
 	
 	public String getEmail() {
 		return this.email;
-	}
-	
-	public String getSenha() {
-		return this.senha;
 	}
 	
 	public void setNomeCompleto(String nomeCompleto) {

@@ -21,8 +21,7 @@ public class UsuarioService {
 
 		Usuario usuario = new Usuario(usuarioDTO.getNomeCompleto(),
 				                      usuarioDTO.getUsername(),
-				                      usuarioDTO.getEmail(),
-				                      usuarioDTO.getSenha());
+				                      usuarioDTO.getEmail());
 		
 		this.usuarioRepository.addUser(usuario);
 		
@@ -33,42 +32,28 @@ public class UsuarioService {
 		return this.usuarioRepository.containsUsername(username);
 	}
 	
-	public String getInfoUsuario(String username, String senha) {
+	public String getInfoUsuario(String username) {
 		Usuario usuario = this.usuarioRepository.getUser(username);
 		
-		if (!(usuario.getSenha().equals(senha))) {
-			return "Senha incorreta";
-		} else {
-			return usuario.toString();
-		}
-		
+		return usuario.toString();
 	}
 	
-	public String updateInfoUsuario(String username, String novoNomeCompleto, String novoEmail, String senha) {
-		Usuario usuario = this.usuarioRepository.getUser(username);
+	public String updateInfoUsuario(UsuarioDTO usuarioDTO) {
+		Usuario usuario = this.usuarioRepository.getUser(usuarioDTO.getUsername());
 		
-		if (!(usuario.getSenha().equals(senha))) {
-			return "Senha incorreta";
-		} else {
-			usuario.setNomeCompleto(novoNomeCompleto);
-			usuario.setEmail(novoEmail);
-			
-			this.usuarioRepository.updateUser(usuario);
-			
-			return "Usuário atualizado com username '" + usuario.getUsername() + "'";
-		}
+		usuario.setNomeCompleto(usuarioDTO.getNomeCompleto());
+		usuario.setEmail(usuarioDTO.getEmail());
+		this.usuarioRepository.updateUser(usuario);
 		
+		return "Usuário atualizado com username '" + usuario.getUsername() + "'";
 	}
 	
-	public String deletaUsuario(String username, String senha) {
+	public String deletaUsuario(String username) {
 		Usuario usuario = this.usuarioRepository.getUser(username);
 		
-		if (!(usuario.getSenha().equals(senha))) {
-			return "Senha incorreta";
-		} else {
-			this.usuarioRepository.delUser(username);
-			return "Usuário removido com username '" + usuario.getUsername() + "'";
-		}
+		this.usuarioRepository.delUser(username);
+		
+		return "Usuário removido com username '" + usuario.getUsername() + "'";
 	}
 
 }

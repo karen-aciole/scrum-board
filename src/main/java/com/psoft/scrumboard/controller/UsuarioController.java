@@ -25,12 +25,6 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioService usuarioService;
-
-	@Autowired
-	private UserStoryService userStoryService;
-
-	@Autowired
-	private ProjetoService projetoService;
 	
 	@RequestMapping(value = "/usuario/", method = RequestMethod.POST)
 	public ResponseEntity<?> cadastraUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -46,13 +40,13 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET)
-	public ResponseEntity<?> acessaInfoUsuario(@PathVariable String username, @RequestParam String senha) {
+	public ResponseEntity<?> acessaInfoUsuario(@PathVariable String username) {
 		
 		if (!(this.usuarioService.contemUsername(username))) {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 		
-		String info = this.usuarioService.getInfoUsuario(username, senha);
+		String info = this.usuarioService.getInfoUsuario(username);
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);		
 	}
@@ -64,23 +58,21 @@ public class UsuarioController {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 		
-		String info = this.usuarioService.updateInfoUsuario(usuarioDTO.getUsername(), usuarioDTO.getNomeCompleto(), usuarioDTO.getEmail(), usuarioDTO.getSenha());
+		String info = this.usuarioService.updateInfoUsuario(usuarioDTO);
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.DELETE)
-	public ResponseEntity<?> removeUsuario(@PathVariable String username, @RequestParam String senha) {
+	public ResponseEntity<?> removeUsuario(@PathVariable String username) {
 		
 		if (!(this.usuarioService.contemUsername(username))) {
 			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
 		
-		String info = this.usuarioService.deletaUsuario(username, senha);
+		String info = this.usuarioService.deletaUsuario(username);
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);		
 	}
-
-
-
+	
 }
