@@ -3,6 +3,7 @@ package com.psoft.scrumboard.controller;
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.exception.UserStoryAlreadyExistsException;
 import com.psoft.scrumboard.exception.UserStoryNotFoundException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
@@ -25,36 +26,39 @@ public class UserStoryController {
 
     @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
+        String titulo;
 
-        if (this.userStoryService.contemUserStory(projectKey, userStoryDTO.getId())) {
+        try {
+            titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO);
+        } catch (UserStoryAlreadyExistsException e) {
             return new ResponseEntity<String>("UserStory já cadastrada no sistema - número não disponível", HttpStatus.CONFLICT);
         }
-
-        String titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO);
 
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @RequestParam Integer idUserStory) {
+    public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @PathVariable Integer idUserStory) {
+        String info;
 
-        if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
+        try {
+            info = this.userStoryService.getInfoUserStory(projectKey, idUserStory);
+        } catch (UserStoryNotFoundException e) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         }
-
-        String info = this.userStoryService.getInfoUserStory(projectKey, idUserStory);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory) {
+        String info;
 
-        if (!(this.userStoryService.contemUserStory(projectKey, idUserStory))) {
+        try {
+            info = this.userStoryService.deletaUserStory(projectKey, idUserStory);
+        } catch (UserStoryNotFoundException e) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         }
-
-        String info = this.userStoryService.deletaUserStory(projectKey, idUserStory);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }

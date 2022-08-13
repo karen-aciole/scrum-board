@@ -3,6 +3,7 @@ package com.psoft.scrumboard.service;
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
+import com.psoft.scrumboard.exception.UserStoryAlreadyExistsException;
 import com.psoft.scrumboard.exception.UserStoryNotFoundException;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
@@ -28,11 +29,17 @@ public class UserStoryService {
 	private ProjetoRepository projetoRepository;
 
     @Autowired
+    private UserStoryRepository userStoryRepository;
+
+    @Autowired
     private ProjetoService projetoService;
 
-    public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) {
+    public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryAlreadyExistsException {
     	
-    	EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository
+    	if (this.contemUserStory(projectKey, userStoryDTO.getId()))
+            throw new UserStoryAlreadyExistsException("UserStory já cadastrada no projeto - número não disponível");
+
+        EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository
                 .getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_DO);
     			
     	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
@@ -46,7 +53,7 @@ public class UserStoryService {
         return userStory.getTitulo();
     }
 
-    public boolean contemUserStory(Integer projectKey, Integer idUserStory) {
+    private boolean contemUserStory(Integer projectKey, Integer idUserStory) {
         if (this.projetoRepository.containsProjectKey(projectKey)) {
         	return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().containsUserStory(idUserStory);
         } else {
@@ -54,8 +61,11 @@ public class UserStoryService {
         }
     }
 
-    public String getInfoUserStory(Integer projectKey, Integer idUserStory) {
-    	return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(idUserStory).toString();
+    public String getInfoUserStory(Integer projectKey, Integer idUserStory) throws UserStoryNotFoundException {
+        if (!contemUserStory(projectKey, idUserStory))
+            throw new UserStoryNotFoundException("UserStory não encontrada no projeto");
+
+        return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(idUserStory).toString();
     }
 
     public String updateInfoUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryNotFoundException {
@@ -73,9 +83,12 @@ public class UserStoryService {
 
     }
 
-    public String deletaUserStory(Integer projectKey, Integer idUserStory) {
-        
-    	UserStoryRepository userStories = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository();
+    public String deletaUserStory(Integer projectKey, Integer idUserStory) throws UserStoryNotFoundException {
+
+        if (!contemUserStory(projectKey, idUserStory))
+            throw new UserStoryNotFoundException("UserStory não encontrada no projeto");
+
+        UserStoryRepository userStories = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository();
     	String titulo = userStories.getUserStory(idUserStory).getTitulo();
     	userStories.delUserStory(idUserStory);
     	
