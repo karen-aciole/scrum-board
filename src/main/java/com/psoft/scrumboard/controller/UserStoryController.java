@@ -3,8 +3,7 @@ package com.psoft.scrumboard.controller;
 import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
-import com.psoft.scrumboard.exception.UserStoryAlreadyExistsException;
-import com.psoft.scrumboard.exception.UserStoryNotFoundException;
+import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,10 @@ public class UserStoryController {
 
         try {
             titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryAlreadyExistsException e) {
-            return new ResponseEntity<String>("UserStory já cadastrada no sistema - número não disponível", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory já cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
@@ -43,8 +44,10 @@ public class UserStoryController {
 
         try {
             info = this.userStoryService.getInfoUserStory(projectKey, idUserStory);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
-            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
@@ -56,8 +59,10 @@ public class UserStoryController {
 
         try {
             info = this.userStoryService.deletaUserStory(projectKey, idUserStory);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
-            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
@@ -66,6 +71,7 @@ public class UserStoryController {
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.PUT)
     public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
         String info;
+
         try {
             info = this.userStoryService.updateInfoUserStory(projectKey, userStoryDTO);
         } catch (UserStoryNotFoundException e) {
@@ -76,17 +82,39 @@ public class UserStoryController {
     }
     
     @RequestMapping(value = "/userstory/participaDesenvolvedor", method = RequestMethod.POST)
-    public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
+    public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) throws ProjetoNotFoundException, UserStoryNotFoundException {
+        String info;
 
-    	String info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
-    	
-    	return new ResponseEntity<String>(info, HttpStatus.OK);
+    	try {
+            info = this.userStoryService.atribuiUsuarioUserStory(atribuiUserStoryDTO);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userstory/scrumMasterAtribuiUserStory", method = RequestMethod.POST)
     public ResponseEntity<?> scrumMasterAtribuiUserStoryAIntegrante(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
+        String info;
 
-        String info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, atribuiUserStoryDTO.getScrumMasterName());
+        try {
+
+            info = this.userStoryService.scrumMasterAtribuiUsuarioUserStory(atribuiUserStoryDTO, atribuiUserStoryDTO.getScrumMasterName());
+
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
