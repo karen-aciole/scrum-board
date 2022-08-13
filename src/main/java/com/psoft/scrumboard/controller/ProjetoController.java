@@ -2,6 +2,9 @@ package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.AdicionaIntegranteDTO;
 import com.psoft.scrumboard.dto.ProjetoDTO;
+import com.psoft.scrumboard.exception.ProjetoNotFoundException;
+import com.psoft.scrumboard.exception.UsuarioAlreadyExistsException;
+import com.psoft.scrumboard.exception.UsuarioNotAllowedException;
 import com.psoft.scrumboard.exception.UsuarioNotFoundException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UsuarioService;
@@ -39,19 +42,17 @@ public class ProjetoController {
     @RequestMapping(value = "/projeto/", method = RequestMethod.PUT)
     public ResponseEntity<?> adicionaIntegrante(@RequestBody AdicionaIntegranteDTO adicionaIntegranteDTO) {
 
-        if (!this.projetoService.contemProjectKey(adicionaIntegranteDTO.getProjectKey())) {
-            return new ResponseEntity<String>("Projeto nao cadastrado no sistema - projectname invalido", HttpStatus.CONFLICT);
-        }
-
-        if (!(this.usuarioService.contemUsername(adicionaIntegranteDTO.getUserName()))) {
+        try {
+            this.projetoService.adicionaDesenvolvedor(adicionaIntegranteDTO);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não cadastrado no sistema - projectname invalido", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
-        }
-
-        if (!(this.projetoService.getScrumMasterName(adicionaIntegranteDTO.getProjectKey()).equals(adicionaIntegranteDTO.getScrumMasterName()))) {
+        } catch (UsuarioAlreadyExistsException e) {
+            return new ResponseEntity<String>("Usuário já está cadastrado no projeto", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("Scrum Master não pertence a esse projeto", HttpStatus.CONFLICT);
         }
-
-        String projectname = this.projetoService.adicionaDesenvolvedor(adicionaIntegranteDTO);
 
         return new ResponseEntity<String>("Integrante cadastrado com name '" + adicionaIntegranteDTO.getUserName() + "'", HttpStatus.CREATED);
     }
