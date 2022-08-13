@@ -105,7 +105,7 @@ public class UserStoryService {
         if (!(this.projetoService.contemIntegrante(projetoKey, username))) {
             return "Usuário não é integrante deste projeto";
         }
-
+        
         Integrante integrante = this.projetoRepository.getProjeto(projetoKey)
                 .getIntegranteRepository()
                 .getIntegrante(username);

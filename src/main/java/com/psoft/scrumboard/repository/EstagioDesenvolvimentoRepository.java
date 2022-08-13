@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,10 @@ public class EstagioDesenvolvimentoRepository {
 	
 	public EstagioDesenvolvimento getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum estagio) {
 		return this.estagiosDesenvolvimento.get(estagio);
+	}
+	
+	public Collection<EstagioDesenvolvimento> getEstagiosDesenvolvimento() {
+		return this.estagiosDesenvolvimento.values();
 	}
 
 }

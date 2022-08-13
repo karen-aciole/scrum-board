@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,10 @@ public class PapelRepository {
 	
 	public Papel getPapelByEnum(PapelEnum papel) {
 		return this.papeis.get(papel);
+	}
+	
+	public Collection<Papel> getPapeis() {
+		return this.papeis.values();
 	}
 
 }
