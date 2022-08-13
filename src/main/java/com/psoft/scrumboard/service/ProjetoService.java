@@ -82,11 +82,13 @@ public class ProjetoService {
 
     }
 
-    public String getInfoProjeto(Integer projectKey) {
+    public String getInfoProjeto(Integer projectKey) throws ProjetoNotFoundException {
+        if (!this.projetoRepository.containsProjectKey(projectKey))
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+
         Projeto projeto = this.projetoRepository.getProjeto(projectKey);
 
         return projeto.toString();
-
     }
 
     public String getScrumMasterName(Integer projectKey){
@@ -97,7 +99,10 @@ public class ProjetoService {
         return scrumMastername;
     }
 
-    public String deletaProjeto(Integer projectKey) {
+    public String deletaProjeto(Integer projectKey) throws ProjetoNotFoundException {
+        if (!this.projetoRepository.containsProjectKey(projectKey))
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+
         this.projetoRepository.delProject(projectKey);
 
         return "Projeto removido com nome '" + projectKey + "'";
@@ -107,12 +112,22 @@ public class ProjetoService {
     	return this.projetoRepository.getProjeto(projectKey).contemIntegrante(username);
     }
 
-    public String updateInfoProjeto(Integer key, ProjetoDTO projetoDTO) {
+    public String updateInfoProjeto(Integer key, ProjetoDTO projetoDTO)
+            throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+
+        if (!this.projetoRepository.containsProjectKey(key)) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        } else if (!this.usuarioRepository.containsUsername(projetoDTO.getScrumMasterName())) {
+            throw new UsuarioNotFoundException("Usuário não está cadastrado no sistema - username inválido.");
+        } else if (!(this.getScrumMasterName(key).equals(projetoDTO.getScrumMasterName()))) {
+            throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para adicionar integrantes neste projeto.");
+        }
+
         Projeto projeto = this.projetoRepository.getProjeto(key);
 
-        projeto.setDescricao(projetoDTO.getDescricao());
-        projeto.setName(projetoDTO.getNome());
-        projeto.setInstituicaoParceira(projetoDTO.getInstituicaoParceira());
+        projeto.setDescricao(!projetoDTO.getDescricao().isBlank() ? projetoDTO.getDescricao() : projeto.getDescricao());
+        projeto.setName(!projetoDTO.getNome().isBlank() ? projetoDTO.getNome() : projeto.getNome());
+        projeto.setInstituicaoParceira(!projetoDTO.getInstituicaoParceira().isBlank() ? projetoDTO.getInstituicaoParceira() : projeto.getInstituicaoParceira());
 
         return "Projeto atualizado com nome: '" + projeto.getNome() + "',\ndescricao: '" + projeto.getDescricao() + "'\n" +
                 "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Master: " + projetoDTO.getScrumMasterName();
