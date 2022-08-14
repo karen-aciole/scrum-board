@@ -3,6 +3,7 @@ package com.psoft.scrumboard.model;
 import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.IntegranteRepository;
+import com.psoft.scrumboard.repository.TaskRepository;
 
 public class UserStory {
 	
@@ -15,6 +16,7 @@ public class UserStory {
     private EstagioDesenvolvimento estagioDesenvolvimento;
     
     private IntegranteRepository responsaveis;
+    private TaskRepository tasks;
 
     public UserStory(Integer id, String titulo, String descricao, EstagioDesenvolvimento estagioDesenvolvimento) {
         this.id = id;
@@ -22,6 +24,7 @@ public class UserStory {
         this.descricao = descricao;
         this.estagioDesenvolvimento = estagioDesenvolvimento;
         this.responsaveis = new IntegranteRepository();
+        this.tasks = new TaskRepository();
     }
 
     public Integer getId() {
@@ -52,6 +55,10 @@ public class UserStory {
     	return this.responsaveis;
     }
 
+    public TaskRepository getTasks() {
+        return tasks;
+    }
+
     public String toString() {
         return "Informações da UserStory '" + this.titulo + "' - US" + this.getId() + "\n"
                 + "Descrição: " + this.getDescricao() + "\n"
@@ -61,4 +68,5 @@ public class UserStory {
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
+
 }

@@ -30,9 +30,6 @@ public class UserStoryService {
     private ProjetoRepository projetoRepository;
 
     @Autowired
-    private UserStoryRepository userStoryRepository;
-
-    @Autowired
     private ProjetoService projetoService;
 
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryAlreadyExistsException, ProjetoNotFoundException {
@@ -113,7 +110,7 @@ public class UserStoryService {
     }
 
     public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioAlreadyExistsException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioAlreadyExistsException, StatusException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -125,8 +122,12 @@ public class UserStoryService {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
+
         } else if (this.integranteParticipaDeUserStory(projectKey, userStoryId, username)) {
-        throw new UsuarioAlreadyExistsException("Usuário já participa da User Story");
+
+        } else if ((getUserStoryState(projectKey, userStoryId).equals(EstagioDesenvolvimentoEnum.DONE))) {
+            throw new StatusException ("User Story já está finalizada");
+
     }
 
         Integrante integrante = this.projetoRepository.getProjeto(projectKey)
@@ -148,7 +149,7 @@ public class UserStoryService {
     }
 
     public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String scrumMaster)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, UsuarioAlreadyExistsException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, StatusException, UsuarioAlreadyExistsException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -162,8 +163,13 @@ public class UserStoryService {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
         } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(scrumMaster))) {
             throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto");
+
         } else if (this.integranteParticipaDeUserStory(projectKey, userStoryId, username)) {
             throw new UsuarioAlreadyExistsException("Usuário já participa da User Story");
+
+        } else if ((getUserStoryState(projectKey, userStoryId).equals(EstagioDesenvolvimentoEnum.DONE))) {
+            throw new StatusException ("User Story já está finalizada");
+
         }
 
         this.mudaStatusToDoParaWorkInProgress(new MudaStatusDTO(projectKey, userStoryId, username));
@@ -198,12 +204,21 @@ public class UserStoryService {
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.TO_VERIFY);
     }
 
+    private EstagioDesenvolvimentoEnum getUserStoryState(Integer projectKey, Integer userStoryId) {
+
+    	return this.projetoRepository.getProjeto(projectKey)
+                .getUserStoryRepository()
+                .getUserStory(userStoryId)
+                .getEstagioDesenvolvimento();
+    }
+
     private String mudaStatus(MudaStatusDTO mudaStatus, EstagioDesenvolvimentoEnum estagio) {
 
         Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
         UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
 
-        EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(estagio);
+        EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository
+                .getEstagioDesenvolvimentoByEnum(estagio);
 
         us.setEstagioDesenvolvimentoEnum(estagioDesenvolvimento);
 
@@ -224,7 +239,8 @@ public class UserStoryService {
         Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
         UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
 
-        EstagioDesenvolvimento statusAtual = this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(us.getEstagioDesenvolvimento());
+        EstagioDesenvolvimento statusAtual = this.estagioDesenvolvimentoRepository
+                .getEstagioDesenvolvimentoByEnum(us.getEstagioDesenvolvimento());
 
         if (!statusAtual.equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_VERIFY))) {
             throw new StatusException("A US não se encontra no estágio de desenvolvimento 'To Verify'");
@@ -334,6 +350,4 @@ public class UserStoryService {
             }
             return listaDeUserStoriesDoUsuario.size();
         }
-    }
-
-
+}
