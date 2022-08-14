@@ -112,7 +112,6 @@ public class UserStoryController {
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto.", HttpStatus.CONFLICT);
         }
-
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 

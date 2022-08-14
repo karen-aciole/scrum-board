@@ -110,7 +110,7 @@ public class UserStoryService {
     }
 
     public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, StatusException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -142,8 +142,8 @@ public class UserStoryService {
         return integrante.getUsuario().getUsername() + " recebeu a atribuição com sucesso!";
     }
 
-    public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String userStoryName)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, StatusException {
+    public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String scrumMaster)
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -337,6 +337,4 @@ public class UserStoryService {
             }
             return listaDeUserStoriesDoUsuario.size();
         }
-    }
-
-
+}
