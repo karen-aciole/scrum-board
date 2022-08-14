@@ -4,12 +4,17 @@ import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.exception.*;
+import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -157,6 +162,22 @@ public class UserStoryController {
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userStory/{projectKey}/", method = RequestMethod.GET)
+    public ResponseEntity<?> listaUserStoriesPorProjeto(@PathVariable Integer projectKey) {
+
+        Collection<UserStory> userStories = this.userStoryService.getUsersStoriesByProject(projectKey);
+
+        return new ResponseEntity<>(userStories, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userStory/{projectKey}/{userStoryKey}", method = RequestMethod.GET)
+    public ResponseEntity<?> listaIntegrantesDeUmaUserStory(@PathVariable Integer projectKey, @PathVariable Integer userStoryKey) {
+
+        Set<String> integrantes = this.userStoryService.listaIntegrantesDeUmaUserStory(projectKey, userStoryKey);
+
+        return new ResponseEntity<>(integrantes, HttpStatus.OK);
     }
 
 }

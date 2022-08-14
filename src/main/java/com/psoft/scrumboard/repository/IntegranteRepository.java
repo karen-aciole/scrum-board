@@ -3,8 +3,7 @@ package com.psoft.scrumboard.repository;
 import com.psoft.scrumboard.model.Integrante;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class IntegranteRepository {
@@ -31,5 +30,7 @@ public class IntegranteRepository {
 		this.integrantes.remove(username);
 	}
 
-
+	public Set<String> getIntegrantes() {
+		return this.integrantes.keySet();
+	}
 }
