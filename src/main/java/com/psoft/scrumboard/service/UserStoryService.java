@@ -113,7 +113,7 @@ public class UserStoryService {
     }
 
     public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioAlreadyExistsException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -125,7 +125,9 @@ public class UserStoryService {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
-        }
+        } else if (this.integranteParticipaDeUserStory(projectKey, userStoryId, username)) {
+        throw new UsuarioAlreadyExistsException("Usuário já participa da User Story");
+    }
 
         Integrante integrante = this.projetoRepository.getProjeto(projectKey)
                 .getIntegranteRepository()
@@ -145,8 +147,8 @@ public class UserStoryService {
         return integrante.getUsuario().getUsername() + " recebeu a atribuição com sucesso!";
     }
 
-    public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String userStoryName)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+    public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String scrumMaster)
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, UsuarioAlreadyExistsException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -158,8 +160,10 @@ public class UserStoryService {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
-        } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(userStoryName))) {
+        } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(scrumMaster))) {
             throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto");
+        } else if (this.integranteParticipaDeUserStory(projectKey, userStoryId, username)) {
+            throw new UsuarioAlreadyExistsException("Usuário já participa da User Story");
         }
 
         this.mudaStatusToDoParaWorkInProgress(new MudaStatusDTO(projectKey, userStoryId, username));
@@ -237,6 +241,12 @@ public class UserStoryService {
         this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(us.getEstagioDesenvolvimento());
 
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS);
+    }
+
+    private boolean integranteParticipaDeUserStory(Integer projectKey, Integer userStoryId, String username) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory us = projeto.getUserStoryRepository().getUserStory(userStoryId);
+        return us.getResponsaveis().containsUsername(username);
     }
 
     public String listaRelatorioDeUsersStoriesDeUmUsuario(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotFoundException {

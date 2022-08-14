@@ -19,9 +19,6 @@ public class UserStoryController {
 
     @Autowired
     private UserStoryService userStoryService;
-    
-    @Autowired
-    private ProjetoService projetoService;
 
     @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
@@ -93,6 +90,8 @@ public class UserStoryController {
             return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioAlreadyExistsException e) {
+            return new ResponseEntity<String>("Usuário já foi atribuído a esta User Story.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
@@ -114,7 +113,9 @@ public class UserStoryController {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto.", HttpStatus.CONFLICT);
-        }
+        } catch (UsuarioAlreadyExistsException e) {
+        return new ResponseEntity<String>("Usuário já foi atribuído a esta User Story.", HttpStatus.CONFLICT);
+    }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
