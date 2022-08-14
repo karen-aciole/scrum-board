@@ -19,9 +19,6 @@ public class UserStoryController {
 
     @Autowired
     private UserStoryService userStoryService;
-    
-    @Autowired
-    private ProjetoService projetoService;
 
     @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
     public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
@@ -93,8 +90,6 @@ public class UserStoryController {
             return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
-        } catch (StatusException e) {
-            return new ResponseEntity<String>("UserStory já está finalizada.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
@@ -116,8 +111,6 @@ public class UserStoryController {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto.", HttpStatus.CONFLICT);
-        } catch (StatusException e) {
-            return new ResponseEntity<String>("UserStory já está finalizada.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
@@ -161,6 +154,21 @@ public class UserStoryController {
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> relatorioDescritosDeUserStoriesAtribuidasAUsuario(@PathVariable Integer projectKey, @PathVariable String username) {
+        String info;
+
+        try {
+            info = this.userStoryService.listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, username);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
 }

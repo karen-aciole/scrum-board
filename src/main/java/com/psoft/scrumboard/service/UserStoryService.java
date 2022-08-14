@@ -15,17 +15,19 @@ import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 @Service
 public class UserStoryService {
-	
-	@Autowired
+
+    @Autowired
     private EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository;
-	
-	@Autowired
-	private ProjetoRepository projetoRepository;
+
+    @Autowired
+    private ProjetoRepository projetoRepository;
 
     @Autowired
     private ProjetoService projetoService;
@@ -34,18 +36,18 @@ public class UserStoryService {
 
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if  (this.contemUserStory(projectKey, userStoryDTO.getId())) {
+        } else if (this.contemUserStory(projectKey, userStoryDTO.getId())) {
             throw new UserStoryAlreadyExistsException("UserStory já cadastrada no projeto - número não disponível");
         }
 
         EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository
                 .getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_DO);
-    			
-    	UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
+
+        UserStory userStory = new UserStory(userStoryDTO.getId(), userStoryDTO.getTitulo(),
                 userStoryDTO.getDescricao(),
                 estagioDesenvolvimento);
-    	
-    	Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
 
         projeto.getUserStoryRepository().addUserStory(userStory);
 
@@ -54,7 +56,7 @@ public class UserStoryService {
 
     private boolean contemUserStory(Integer projectKey, Integer idUserStory) {
         if (this.projetoRepository.containsProjectKey(projectKey))
-        	return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().containsUserStory(idUserStory);
+            return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().containsUserStory(idUserStory);
 
         return false;
     }
@@ -62,7 +64,7 @@ public class UserStoryService {
     public String getInfoUserStory(Integer projectKey, Integer idUserStory) throws UserStoryNotFoundException, ProjetoNotFoundException {
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if  (!this.contemUserStory(projectKey, idUserStory)) {
+        } else if (!this.contemUserStory(projectKey, idUserStory)) {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         }
 
@@ -71,7 +73,8 @@ public class UserStoryService {
 
     public String updateInfoUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryNotFoundException {
 
-        if (!contemUserStory(projectKey, userStoryDTO.getId())) throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
+        if (!contemUserStory(projectKey, userStoryDTO.getId()))
+            throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
 
         UserStory userStory = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(userStoryDTO.getId());
 
@@ -88,24 +91,24 @@ public class UserStoryService {
 
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if  (!this.contemUserStory(projectKey, idUserStory)) {
+        } else if (!this.contemUserStory(projectKey, idUserStory)) {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         }
 
         UserStoryRepository userStories = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository();
-    	String titulo = userStories.getUserStory(idUserStory).getTitulo();
-    	userStories.delUserStory(idUserStory);
-    	
-    	return "UserStory com titulo '" + titulo + "' removida";
+        String titulo = userStories.getUserStory(idUserStory).getTitulo();
+        userStories.delUserStory(idUserStory);
+
+        return "UserStory com titulo '" + titulo + "' removida";
     }
-    
+
     private boolean usuarioTemPapelPermitido(Integrante integrante) {
-    	
-    	return (integrante.getPapel().getTipo().equals(PapelEnum.PESQUISADOR)
-    			|| integrante.getPapel().getTipo().equals(PapelEnum.DESENVOLVEDOR)
-    			|| integrante.getPapel().getTipo().equals(PapelEnum.ESTAGIARIO));
+
+        return (integrante.getPapel().getTipo().equals(PapelEnum.PESQUISADOR)
+                || integrante.getPapel().getTipo().equals(PapelEnum.DESENVOLVEDOR)
+                || integrante.getPapel().getTipo().equals(PapelEnum.ESTAGIARIO));
     }
-    
+
     public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory)
             throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, StatusException {
 
@@ -115,13 +118,11 @@ public class UserStoryService {
 
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if  (!this.contemUserStory(projectKey, userStoryId)) {
+        } else if (!this.contemUserStory(projectKey, userStoryId)) {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
-        } else if ((getUserStoryState(projectKey, userStoryId).equals(EstagioDesenvolvimentoEnum.DONE))) {
-            throw new StatusException ("User Story já está finalizada");
-    }
+        }
 
         Integrante integrante = this.projetoRepository.getProjeto(projectKey)
                 .getIntegranteRepository()
@@ -150,14 +151,12 @@ public class UserStoryService {
 
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if  (!this.contemUserStory(projectKey, userStoryId)) {
+        } else if (!this.contemUserStory(projectKey, userStoryId)) {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
-        } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(userStoryName))) {
+        } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(scrumMaster))) {
             throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto");
-        } else if ((getUserStoryState(projectKey, userStoryId).equals(EstagioDesenvolvimentoEnum.DONE))) {
-            throw new StatusException ("User Story já está finalizada");
         }
 
         this.mudaStatusToDoParaWorkInProgress(new MudaStatusDTO(projectKey, userStoryId, username));
@@ -218,7 +217,7 @@ public class UserStoryService {
 
         if (!this.projetoRepository.containsProjectKey(mudaStatus.getProjectKey())) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if  (!this.contemUserStory(mudaStatus.getProjectKey(), mudaStatus.getIdUserStory())) {
+        } else if (!this.contemUserStory(mudaStatus.getProjectKey(), mudaStatus.getIdUserStory())) {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.getScrumMasterName(mudaStatus.getProjectKey()).equals(mudaStatus.getUsername()))) {
             throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para mudar status nesse projeto.");
@@ -247,4 +246,97 @@ public class UserStoryService {
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS);
     }
 
-}
+    private boolean integranteParticipaDeUserStory(Integer projectKey, Integer userStoryId, String username) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory us = projeto.getUserStoryRepository().getUserStory(userStoryId);
+        return us.getResponsaveis().containsUsername(username);
+    }
+
+    public String listaRelatorioDeUsersStoriesDeUmUsuario(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotFoundException {
+
+        if (!this.projetoRepository.containsProjectKey(projectKey)) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
+            throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
+        }
+
+        int userStoriesTotal = getTotalDeUserStoriesByProject(projectKey);
+        int userStoriesByUsuario = getTotalDeUserStoriesByIntegrante(projectKey, username);
+        float percentualUserStoriesByUsuario = ( (float) userStoriesByUsuario / userStoriesTotal) * 100;
+        String percentualUserStoriesByUsuarioFormatado = String.format("%.2f", percentualUserStoriesByUsuario);
+
+        int totalUserStoriesWorkInProgressByUsuario = getTotalUserStoriesFromUserByStatusWorkInProgress(projectKey, username);
+        int totalUserStoriesToVerifyByUsuario = getTotalUserStoriesFromUserByStatusToVerify(projectKey, username);
+        int totalUserStoriesDoneByUsuario = getTotalUserStoriesFromUserByStatusDone(projectKey, username);
+
+
+        if (percentualUserStoriesByUsuario == 0)
+            return "Não há User Stories atribuídas para o usuário: " + username;
+
+        return "Percentual de User Stories do usuário " + username + ": " + percentualUserStoriesByUsuarioFormatado + "%\n" +
+                "Total de User Stories atribuídas ao usuário: " + userStoriesByUsuario + "/" + userStoriesTotal + "\n" +
+                "Percentual de User Stories do usuário em cada estágio de desenvolvimento: \n" +
+                "Work In Progress: " + totalUserStoriesWorkInProgressByUsuario + "\n" +
+                "To Verify: " + totalUserStoriesToVerifyByUsuario + "\n" +
+                "Done: " + totalUserStoriesDoneByUsuario + "\n";
+        }
+
+        private int getTotalUserStoriesFromUserByStatusWorkInProgress(Integer projectKey, String username) {
+            return listAllUserStoriesFromUserByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS, username).size();
+        }
+
+        private int getTotalUserStoriesFromUserByStatusToVerify(Integer projectKey, String username) {
+            return listAllUserStoriesFromUserByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.TO_VERIFY, username).size();
+        }
+        private int getTotalUserStoriesFromUserByStatusDone(Integer projectKey, String username) {
+            return listAllUserStoriesFromUserByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.DONE, username).size();
+        }
+
+        private Collection<UserStory> listAllUserStoriesByEstagioDesenvolvimento(Integer projectKey, EstagioDesenvolvimentoEnum estagio) {
+            List<UserStory> userStoriesByEstagioDesenvolvimento = new ArrayList<>();
+
+            for (UserStory us : this.getUsersStoriesByProject(projectKey)) {
+                if (us.getEstagioDesenvolvimento().equals(estagio))
+                    userStoriesByEstagioDesenvolvimento.add(us);
+            }
+            return userStoriesByEstagioDesenvolvimento;
+        }
+
+        private Collection<UserStory> listAllUserStoriesFromUserByEstagioDesenvolvimento(Integer projectKey, EstagioDesenvolvimentoEnum estagio, String username) {
+            Collection<UserStory> listaDeUserStoriesPorStatus = listAllUserStoriesByEstagioDesenvolvimento(projectKey, estagio);
+            Collection<UserStory> listaDeUserStoriesDoUsuarioPorStatus = new ArrayList<>();
+
+            for (UserStory us : listaDeUserStoriesPorStatus) {
+                if (us.getResponsaveis().containsUsername(username))
+                    listaDeUserStoriesDoUsuarioPorStatus.add(us);
+            }
+            return listaDeUserStoriesDoUsuarioPorStatus;
+        }
+
+        private Collection<String> listaIntegrantesDeUmaUserStory (Integer projectKey, Integer userStoryId){
+            return this.projetoRepository.getProjeto(projectKey)
+                    .getUserStoryRepository().getUserStory(userStoryId).getResponsaveis().getIntegrantes();
+        }
+
+        Collection<UserStory> getUsersStoriesByProject (Integer projectKey){
+            return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll();
+        }
+
+        private int getTotalDeUserStoriesByProject (Integer projectKey){
+            return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll().size();
+        }
+
+        private int getTotalDeUserStoriesByIntegrante (Integer projectKey, String username){
+            Collection<UserStory> listaDeUserStories = getUsersStoriesByProject(projectKey);
+            List<UserStory> listaDeUserStoriesDoUsuario = new ArrayList<>();
+
+            for (UserStory userStory : listaDeUserStories) {
+                if (listaIntegrantesDeUmaUserStory(projectKey, userStory.getId()).contains(username)) {
+                    listaDeUserStoriesDoUsuario.add(userStory);
+                }
+            }
+            return listaDeUserStoriesDoUsuario.size();
+        }
+    }
+
+
