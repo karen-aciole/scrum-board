@@ -110,7 +110,7 @@ public class UserStoryService {
     }
 
     public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioAlreadyExistsException, StatusException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -122,6 +122,10 @@ public class UserStoryService {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
+        } else if (integranteParticipaDeUserStory(projectKey, userStoryId, username)) {
+            throw new UsuarioAlreadyExistsException("Usuário já participa desta User Story");
+        } else if ((getUserStoryState(projectKey, userStoryId).equals(EstagioDesenvolvimentoEnum.DONE))) {
+            throw new StatusException("User Story já está finalizada");
         }
 
         Integrante integrante = this.projetoRepository.getProjeto(projectKey)
@@ -143,7 +147,7 @@ public class UserStoryService {
     }
 
     public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String scrumMaster)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, UsuarioAlreadyExistsException, StatusException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -157,6 +161,10 @@ public class UserStoryService {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
         } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(scrumMaster))) {
             throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto");
+        } else if (integranteParticipaDeUserStory(projectKey, userStoryId, username)) {
+            throw new UsuarioAlreadyExistsException("Usuário já participa desta User Story");
+        } else if ((getUserStoryState(projectKey, userStoryId).equals(EstagioDesenvolvimentoEnum.DONE))) {
+            throw new StatusException("User Story já está finalizada");
         }
 
         this.mudaStatusToDoParaWorkInProgress(new MudaStatusDTO(projectKey, userStoryId, username));
