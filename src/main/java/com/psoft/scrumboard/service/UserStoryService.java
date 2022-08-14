@@ -165,7 +165,7 @@ public class UserStoryService {
     }
 
     public String mudaStatusWorkInProgressParaToVerify(MudaStatusDTO mudaStatus)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, StatusException {
 
         Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
         UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
@@ -185,7 +185,7 @@ public class UserStoryService {
 
         if (!statusAtual.equals(estagioDesenvolvimentoRepository
                 .getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS))) {
-            return "A US não se encontra no estágio de desenvolvimento 'work in progress'";
+            throw new StatusException("A US não se encontra no estágio de desenvolvimento 'work in progress'");
         }
 
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.TO_VERIFY);
@@ -204,7 +204,7 @@ public class UserStoryService {
     }
 
     public String mudaStatusToVerifyParaDone(MudaStatusDTO mudaStatus)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException, StatusException {
 
         if (!this.projetoRepository.containsProjectKey(mudaStatus.getProjectKey())) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
@@ -220,7 +220,7 @@ public class UserStoryService {
         EstagioDesenvolvimento statusAtual = this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(us.getEstagioDesenvolvimento());
 
         if (!statusAtual.equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_VERIFY))) {
-            return "A US não se encontra no estágio de desenvolvimento 'To Verify'";
+            throw new StatusException("A US não se encontra no estágio de desenvolvimento 'To Verify'");
         }
 
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.DONE);
@@ -231,11 +231,7 @@ public class UserStoryService {
         Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
         UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
 
-        EstagioDesenvolvimento statusAtual = this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(us.getEstagioDesenvolvimento());
-
-        if (!statusAtual.equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_DO))) {
-            return "A US não se encontra no estágio de desenvolvimento 'To Do'";
-        }
+        this.estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(us.getEstagioDesenvolvimento());
 
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS);
     }

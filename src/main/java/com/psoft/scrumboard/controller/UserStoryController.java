@@ -82,7 +82,7 @@ public class UserStoryController {
     }
     
     @RequestMapping(value = "/userstory/participaDesenvolvedor", method = RequestMethod.POST)
-    public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) throws ProjetoNotFoundException, UserStoryNotFoundException {
+    public ResponseEntity<?> participaDesenvolvimentoUserStory(@RequestBody AtribuiUserStoryDTO atribuiUserStoryDTO) {
         String info;
 
     	try {
@@ -133,7 +133,9 @@ public class UserStoryController {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("O Scrum Master informado não possui autorização para mudar status nesse projeto.", HttpStatus.CONFLICT);
-        }
+        } catch (StatusException e) {
+        return new ResponseEntity<String>("A US não se encontra no estágio de desenvolvimento 'Work In Progress'.", HttpStatus.CONFLICT);
+    }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
@@ -150,6 +152,8 @@ public class UserStoryController {
             return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("O Scrum Master informado não possui autorização para mudar status nesse projeto.", HttpStatus.CONFLICT);
+        } catch (StatusException e) {
+            return new ResponseEntity<String>("A US não se encontra no estágio de desenvolvimento 'To Verify'.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
