@@ -30,15 +30,15 @@ public class TaskController {
         return new ResponseEntity<String>("Task cadastrada com o '" + id + "'", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/task/", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeTask(@RequestBody MudaStatusTaskDTO bodyDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
-        String info = this.taskService.deletaTask(bodyDTO);
+    @RequestMapping(value = "/task/{taskId}/{idUserStory}/{userName}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeTask(@PathVariable Integer taskId, @PathVariable Integer idUserStory, @PathVariable String userName) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+        String info = this.taskService.deletaTask(taskId, idUserStory, userName);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/task/{taskId}/{idUserStory}/{userName}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoUsuario(@PathVariable Integer taskId, @PathVariable Integer idUserStory, @PathVariable String userName) throws TaskNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException {
+    public ResponseEntity<?> acessaInfoTask(@PathVariable Integer taskId, @PathVariable Integer idUserStory, @PathVariable String userName) throws TaskNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException {
 
         String info = this.taskService.getInfoTask(taskId, idUserStory, userName);
 
@@ -54,10 +54,10 @@ public class TaskController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/", method = RequestMethod.PUT)
-    public ResponseEntity<?> mudaStatusTask(@RequestBody MudaStatusTaskDTO mudaStatusTask) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+    @RequestMapping(value = "/task/{taskId}/{idUserStory}/{userName}", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusTask(@PathVariable Integer taskId, @PathVariable Integer idUserStory, @PathVariable String userName) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
 
-        String info = this.taskService.mudaStatusTask(mudaStatusTask);
+        String info = this.taskService.mudaStatusTask(taskId, idUserStory, userName);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
