@@ -16,8 +16,9 @@ import com.psoft.scrumboard.repository.UserStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -241,19 +242,49 @@ public class UserStoryService {
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS);
     }
 
-    public void listaRelatorioDeUsersStoriesDeUmUsuario(Integer projectKey, String username) {
+    public String listaRelatorioDeUsersStoriesDeUmUsuario(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotFoundException {
 
-        //listaIntegrantesDeUmaUserStory(projectKey, username);
+        if (!this.projetoRepository.containsProjectKey(projectKey)) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
+            throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
+        }
 
+
+        long numeroDeUserStoriesTotal = getTotalDeUserStoriesByProject(projectKey);
+        long numeroDeUserStoriesByUsuario = getTotalDeUserStoriesByIntegrante(projectKey, username);
+        long resp = (long)((float)numeroDeUserStoriesByUsuario/numeroDeUserStoriesTotal*100);
+
+        if (resp == 0)
+            return "Não há User Stories atribuídas para o usuário: " + username;
+
+        return "Percentual de User Stories do usuário " + username + ": " + resp + "%\n" +
+                "Total de User Stories atribuídas ao usuário: " + numeroDeUserStoriesByUsuario + "/" + numeroDeUserStoriesTotal;
     }
 
-    public Set<String> listaIntegrantesDeUmaUserStory(Integer projectKey, Integer userStoryId) {
+    private Set<String> listaIntegrantesDeUmaUserStory(Integer projectKey, Integer userStoryId) {
         return this.projetoRepository.getProjeto(projectKey)
                 .getUserStoryRepository().getUserStory(userStoryId).getResponsaveis().getIntegrantes();
     }
 
-    public Collection<UserStory> getUsersStoriesByProject(Integer projectKey) {
+    private Iterable<UserStory> getUsersStoriesByProject(Integer projectKey) {
         return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll();
+    }
+
+    private long getTotalDeUserStoriesByProject(Integer projectKey) {
+        return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll().spliterator().getExactSizeIfKnown();
+    }
+
+    private long getTotalDeUserStoriesByIntegrante(Integer projectKey, String username) {
+        Iterable<UserStory> listaDeUserStories = getUsersStoriesByProject(projectKey);
+        List<UserStory> listaDeUserStoriesDoUsuario = new ArrayList<>();
+
+        for (UserStory userStory : listaDeUserStories) {
+            if (listaIntegrantesDeUmaUserStory(projectKey, userStory.getId()).contains(username)) {
+                listaDeUserStoriesDoUsuario.add(userStory);
+            }
+        }
+        return listaDeUserStoriesDoUsuario.spliterator().getExactSizeIfKnown();
     }
 }
 

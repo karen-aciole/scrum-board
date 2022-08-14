@@ -164,20 +164,19 @@ public class UserStoryController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userStory/{projectKey}/", method = RequestMethod.GET)
-    public ResponseEntity<?> listaUserStoriesPorProjeto(@PathVariable Integer projectKey) {
+    @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
+    public ResponseEntity<?> relatorioDescritosDeUserStoriesAtribuidasAUsuario(@PathVariable Integer projectKey, @PathVariable String username) {
+        String info;
 
-        Collection<UserStory> userStories = this.userStoryService.getUsersStoriesByProject(projectKey);
+        try {
+            info = this.userStoryService.listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, username);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        }
 
-        return new ResponseEntity<>(userStories, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/userStory/{projectKey}/{userStoryKey}", method = RequestMethod.GET)
-    public ResponseEntity<?> listaIntegrantesDeUmaUserStory(@PathVariable Integer projectKey, @PathVariable Integer userStoryKey) {
-
-        Set<String> integrantes = this.userStoryService.listaIntegrantesDeUmaUserStory(projectKey, userStoryKey);
-
-        return new ResponseEntity<>(integrantes, HttpStatus.OK);
+        return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
 }
