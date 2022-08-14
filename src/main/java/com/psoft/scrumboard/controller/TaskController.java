@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.MudaStatusTaskDTO;
+import com.psoft.scrumboard.dto.ReadDeleteTaskDTO;
 import com.psoft.scrumboard.dto.TaskDTO;
 import com.psoft.scrumboard.exception.TaskAlreadyExistsException;
 import com.psoft.scrumboard.exception.TaskNotFoundException;
@@ -26,30 +27,30 @@ public class TaskController {
 
         try {
             id = this.taskService.criaTask(taskDTO);
-        } catch (TaskAlreadyExistsException e) {
-            return new ResponseEntity<String>("Task já cadastrado no sistema - titulo não disponível", HttpStatus.CONFLICT);
+        } catch (TaskAlreadyExistsException | UserStoryNotFoundException | UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Erro ao criar a task", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<String>("Task cadastrada com o '" + id + "'", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/task/", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeTask(@RequestBody Integer userStoryID, Integer taskID) throws UserStoryNotFoundException {
+    public ResponseEntity<?> removeTask(@RequestBody ReadDeleteTaskDTO ReadDeleteTaskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
 
-        String info = this.taskService.deletaTask(userStoryID, taskID);
+        String info = this.taskService.deletaTask(ReadDeleteTaskDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/task/", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoTask(@RequestParam Integer userStoryID, Integer taskID) throws UserStoryNotFoundException {
-        String info = this.taskService.getInfoTask(userStoryID, taskID);
+    public ResponseEntity<?> acessaInfoTask(@RequestBody ReadDeleteTaskDTO readDeleteTaskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+        String info = this.taskService.getInfoTask(readDeleteTaskDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/task/{taskId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaInfoTask(@PathVariable  Integer taskId, @RequestBody TaskDTO taskDTO) throws UserStoryNotFoundException {
+    public ResponseEntity<?> atualizaInfoTask(@PathVariable  Integer taskId, @RequestBody TaskDTO taskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
 
         String info = this.taskService.updateInfoTask(taskId, taskDTO);
 

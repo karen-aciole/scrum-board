@@ -5,11 +5,13 @@ public class TaskDTO {
     private String titulo;
     private String descricao;
     private Integer userStoryID;
+    private String userName;
 
-    public TaskDTO(String titulo, String descricao, Integer userStoryID) {
+    public TaskDTO(String titulo, String descricao, Integer userStoryID, String userName) {
         this.descricao = descricao;
         this.titulo = titulo;
         this.userStoryID = userStoryID;
+        this.userName = userName;
     }
 
     public Integer getUserStoryID() {
@@ -24,4 +26,5 @@ public class TaskDTO {
         return titulo;
     }
 
+    public String getUserName(){ return userName;}
 }
