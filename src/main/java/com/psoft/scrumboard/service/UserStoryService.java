@@ -16,8 +16,8 @@ import com.psoft.scrumboard.repository.UserStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 @Service
@@ -257,42 +257,83 @@ public class UserStoryService {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
         }
 
+        int userStoriesTotal = getTotalDeUserStoriesByProject(projectKey);
+        int userStoriesByUsuario = getTotalDeUserStoriesByIntegrante(projectKey, username);
+        float percentualUserStoriesByUsuario = ( (float) userStoriesByUsuario / userStoriesTotal) * 100;
+        String percentualUserStoriesByUsuarioFormatado = String.format("%.2f", percentualUserStoriesByUsuario);
 
-        long numeroDeUserStoriesTotal = getTotalDeUserStoriesByProject(projectKey);
-        long numeroDeUserStoriesByUsuario = getTotalDeUserStoriesByIntegrante(projectKey, username);
-        long resp = (long)((float)numeroDeUserStoriesByUsuario/numeroDeUserStoriesTotal*100);
+        int totalUserStoriesWorkInProgressByUsuario = getTotalUserStoriesFromUserByStatusWorkInProgress(projectKey, username);
+        int totalUserStoriesToVerifyByUsuario = getTotalUserStoriesFromUserByStatusToVerify(projectKey, username);
+        int totalUserStoriesDoneByUsuario = getTotalUserStoriesFromUserByStatusDone(projectKey, username);
 
-        if (resp == 0)
+
+        if (percentualUserStoriesByUsuario == 0)
             return "Não há User Stories atribuídas para o usuário: " + username;
 
-        return "Percentual de User Stories do usuário " + username + ": " + resp + "%\n" +
-                "Total de User Stories atribuídas ao usuário: " + numeroDeUserStoriesByUsuario + "/" + numeroDeUserStoriesTotal;
-    }
-
-    private Set<String> listaIntegrantesDeUmaUserStory(Integer projectKey, Integer userStoryId) {
-        return this.projetoRepository.getProjeto(projectKey)
-                .getUserStoryRepository().getUserStory(userStoryId).getResponsaveis().getIntegrantes();
-    }
-
-    private Iterable<UserStory> getUsersStoriesByProject(Integer projectKey) {
-        return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll();
-    }
-
-    private long getTotalDeUserStoriesByProject(Integer projectKey) {
-        return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll().spliterator().getExactSizeIfKnown();
-    }
-
-    private long getTotalDeUserStoriesByIntegrante(Integer projectKey, String username) {
-        Iterable<UserStory> listaDeUserStories = getUsersStoriesByProject(projectKey);
-        List<UserStory> listaDeUserStoriesDoUsuario = new ArrayList<>();
-
-        for (UserStory userStory : listaDeUserStories) {
-            if (listaIntegrantesDeUmaUserStory(projectKey, userStory.getId()).contains(username)) {
-                listaDeUserStoriesDoUsuario.add(userStory);
-            }
+        return "Percentual de User Stories do usuário " + username + ": " + percentualUserStoriesByUsuarioFormatado + "%\n" +
+                "Total de User Stories atribuídas ao usuário: " + userStoriesByUsuario + "/" + userStoriesTotal + "\n" +
+                "Percentual de User Stories do usuário em cada estágio de desenvolvimento: \n" +
+                "Work In Progress: " + totalUserStoriesWorkInProgressByUsuario + "\n" +
+                "To Verify: " + totalUserStoriesToVerifyByUsuario + "\n" +
+                "Done: " + totalUserStoriesDoneByUsuario + "\n";
         }
-        return listaDeUserStoriesDoUsuario.spliterator().getExactSizeIfKnown();
+
+        private int getTotalUserStoriesFromUserByStatusWorkInProgress(Integer projectKey, String username) {
+            return listAllUserStoriesFromUserByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS, username).size();
+        }
+
+        private int getTotalUserStoriesFromUserByStatusToVerify(Integer projectKey, String username) {
+            return listAllUserStoriesFromUserByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.TO_VERIFY, username).size();
+        }
+        private int getTotalUserStoriesFromUserByStatusDone(Integer projectKey, String username) {
+            return listAllUserStoriesFromUserByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.DONE, username).size();
+        }
+
+        private Collection<UserStory> listAllUserStoriesByEstagioDesenvolvimento(Integer projectKey, EstagioDesenvolvimentoEnum estagio) {
+            List<UserStory> userStoriesByEstagioDesenvolvimento = new ArrayList<>();
+
+            for (UserStory us : this.getUsersStoriesByProject(projectKey)) {
+                if (us.getEstagioDesenvolvimento().equals(estagio))
+                    userStoriesByEstagioDesenvolvimento.add(us);
+            }
+            return userStoriesByEstagioDesenvolvimento;
+        }
+
+        private Collection<UserStory> listAllUserStoriesFromUserByEstagioDesenvolvimento(Integer projectKey, EstagioDesenvolvimentoEnum estagio, String username) {
+            Collection<UserStory> listaDeUserStoriesPorStatus = listAllUserStoriesByEstagioDesenvolvimento(projectKey, estagio);
+            Collection<UserStory> listaDeUserStoriesDoUsuarioPorStatus = new ArrayList<>();
+
+            for (UserStory us : listaDeUserStoriesPorStatus) {
+                if (us.getResponsaveis().containsUsername(username))
+                    listaDeUserStoriesDoUsuarioPorStatus.add(us);
+            }
+            return listaDeUserStoriesDoUsuarioPorStatus;
+        }
+
+        private Collection<String> listaIntegrantesDeUmaUserStory (Integer projectKey, Integer userStoryId){
+            return this.projetoRepository.getProjeto(projectKey)
+                    .getUserStoryRepository().getUserStory(userStoryId).getResponsaveis().getIntegrantes();
+        }
+
+        Collection<UserStory> getUsersStoriesByProject (Integer projectKey){
+            return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll();
+        }
+
+        private int getTotalDeUserStoriesByProject (Integer projectKey){
+            return projetoRepository.getProjeto(projectKey).getUserStoryRepository().getAll().size();
+        }
+
+        private int getTotalDeUserStoriesByIntegrante (Integer projectKey, String username){
+            Collection<UserStory> listaDeUserStories = getUsersStoriesByProject(projectKey);
+            List<UserStory> listaDeUserStoriesDoUsuario = new ArrayList<>();
+
+            for (UserStory userStory : listaDeUserStories) {
+                if (listaIntegrantesDeUmaUserStory(projectKey, userStory.getId()).contains(username)) {
+                    listaDeUserStoriesDoUsuario.add(userStory);
+                }
+            }
+            return listaDeUserStoriesDoUsuario.size();
+        }
     }
-}
 
 
