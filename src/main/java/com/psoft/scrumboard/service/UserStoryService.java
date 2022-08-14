@@ -28,9 +28,6 @@ public class UserStoryService {
 	private ProjetoRepository projetoRepository;
 
     @Autowired
-    private UserStoryRepository userStoryRepository;
-
-    @Autowired
     private ProjetoService projetoService;
 
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryAlreadyExistsException, ProjetoNotFoundException {

@@ -86,7 +86,7 @@ public class ProjetoController {
     }
 
     @RequestMapping(value = "/projeto/{projectKey}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaInfoProjeto(@PathVariable Integer projectKey, @RequestBody ProjetoDTO projetoDTO, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<?> atualizaInfoProjeto(@PathVariable Integer projectKey, @RequestBody ProjetoDTO projetoDTO) {
         String info;
 
         try {

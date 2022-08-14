@@ -57,6 +57,10 @@ public class Projeto {
     public UserStoryRepository getUserStoryRepository() {
     	return this.userStoryRepository;
     }
+
+    public UserStory getUserStory(Integer id) {
+        return this.userStoryRepository.getUserStory(id);
+    }
     
     public IntegranteRepository getIntegranteRepository() {
     	return this.integranteRepository;
