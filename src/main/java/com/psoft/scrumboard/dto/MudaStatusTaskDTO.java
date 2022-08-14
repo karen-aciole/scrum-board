@@ -2,7 +2,6 @@ package com.psoft.scrumboard.dto;
 
 public class MudaStatusTaskDTO {
     Integer taskId;
-    Integer projectKey;
     Integer idUserStory;
     String username;
 
@@ -12,7 +11,6 @@ public class MudaStatusTaskDTO {
         this.idUserStory = idUserStory;
         this.username = username;
         this.taskId = taskId;
-        this.projectKey = projectKey;
     }
 
     public Integer getTaskKey(){
@@ -27,7 +25,4 @@ public class MudaStatusTaskDTO {
         return username;
     }
 
-    public Integer getProjectKey() {
-        return projectKey;
-    }
 }

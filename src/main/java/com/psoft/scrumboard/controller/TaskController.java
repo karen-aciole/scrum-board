@@ -1,12 +1,8 @@
 package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.MudaStatusTaskDTO;
-import com.psoft.scrumboard.dto.ReadDeleteTaskDTO;
 import com.psoft.scrumboard.dto.TaskDTO;
-import com.psoft.scrumboard.exception.TaskAlreadyExistsException;
-import com.psoft.scrumboard.exception.TaskNotFoundException;
-import com.psoft.scrumboard.exception.UserStoryNotFoundException;
-import com.psoft.scrumboard.exception.UsuarioNotAllowedException;
+import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,19 +31,20 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/task/", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeTask(@RequestBody ReadDeleteTaskDTO ReadDeleteTaskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+    public ResponseEntity<?> removeTask(@RequestBody MudaStatusTaskDTO bodyDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+        String info = this.taskService.deletaTask(bodyDTO);
 
-        String info = this.taskService.deletaTask(ReadDeleteTaskDTO);
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/task/{taskId}/{idUserStory}/{userName}", method = RequestMethod.GET)
+    public ResponseEntity<?> acessaInfoUsuario(@PathVariable Integer taskId, @PathVariable Integer idUserStory, @PathVariable String userName) throws TaskNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException {
+
+        String info = this.taskService.getInfoTask(taskId, idUserStory, userName);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoTask(@RequestBody ReadDeleteTaskDTO readDeleteTaskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
-        String info = this.taskService.getInfoTask(readDeleteTaskDTO);
-
-        return new ResponseEntity<String>(info, HttpStatus.OK);
-    }
 
     @RequestMapping(value = "/task/{taskId}", method = RequestMethod.PUT)
     public ResponseEntity<?> atualizaInfoTask(@PathVariable  Integer taskId, @RequestBody TaskDTO taskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
