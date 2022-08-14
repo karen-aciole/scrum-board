@@ -2,6 +2,8 @@ package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.TaskDTO;
 import com.psoft.scrumboard.exception.TaskAlreadyExistsException;
+import com.psoft.scrumboard.exception.TaskNotFoundException;
+import com.psoft.scrumboard.exception.UserStoryNotFoundException;
 import com.psoft.scrumboard.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,7 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/task/", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeTask(@RequestBody Integer userStoryID, Integer taskID) {
+    public ResponseEntity<?> removeTask(@RequestBody Integer userStoryID, Integer taskID) throws UserStoryNotFoundException {
 
         String info = this.taskService.deletaTask(userStoryID, taskID);
 
@@ -38,16 +40,24 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/task/", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoTask(@RequestParam Integer userStoryID, Integer taskID) {
+    public ResponseEntity<?> acessaInfoTask(@RequestParam Integer userStoryID, Integer taskID) throws UserStoryNotFoundException {
         String info = this.taskService.getInfoTask(userStoryID, taskID);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/task/{taskId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaInfoTask(@PathVariable  Integer taskId, @RequestBody TaskDTO taskDTO) {
+    public ResponseEntity<?> atualizaInfoTask(@PathVariable  Integer taskId, @RequestBody TaskDTO taskDTO) throws UserStoryNotFoundException {
 
         String info = this.taskService.updateInfoTask(taskId, taskDTO);
+
+        return new ResponseEntity<String>(info, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/task/{taskId}/{userStoryID}", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusTask(@PathVariable  Integer taskId, Integer userStoryID) throws UserStoryNotFoundException, TaskNotFoundException {
+
+        String info = this.taskService.mudaStatusTask(taskId, userStoryID);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }

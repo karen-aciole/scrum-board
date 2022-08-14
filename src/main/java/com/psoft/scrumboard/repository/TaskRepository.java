@@ -40,10 +40,17 @@ public class TaskRepository {
     }
 
     public Task getTask(Integer id) {
-        return this.tasks.get(id);
+        if(this.tasks.containsKey(id)){
+            return this.tasks.get(id);
+        } else {
+            return null;
+        }
+
     }
 
     public void delTask(Integer id) {
         this.tasks.remove(id);
     }
+
+
 }
