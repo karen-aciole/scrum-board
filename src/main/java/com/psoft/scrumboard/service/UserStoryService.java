@@ -110,7 +110,7 @@ public class UserStoryService {
     }
 
     public String atribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, StatusException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();
@@ -143,7 +143,7 @@ public class UserStoryService {
     }
 
     public String scrumMasterAtribuiUsuarioUserStory(AtribuiUserStoryDTO atribuiUserStory, String scrumMaster)
-            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException, StatusException {
+            throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
 
         Integer projectKey = atribuiUserStory.getProjectKey();
         Integer userStoryId = atribuiUserStory.getIdUserStory();

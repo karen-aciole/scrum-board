@@ -90,13 +90,6 @@ public class UserStoryController {
             return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
-<<<<<<< HEAD
-        } catch (UsuarioAlreadyExistsException e) {
-            return new ResponseEntity<String>("Usuário já foi atribuído a esta User Story.", HttpStatus.CONFLICT);
-        } catch (StatusException e) {
-            return new ResponseEntity<String>("UserStory já está finalizada.", HttpStatus.CONFLICT);
-=======
->>>>>>> 78d1c0aebfd1f841853c4d0803020718c64190f4
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
@@ -118,16 +111,7 @@ public class UserStoryController {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("O Scrum Master informado não possui autorização para atribuir User Storys aos integrantes desse projeto.", HttpStatus.CONFLICT);
-<<<<<<< HEAD
-        } catch (UsuarioAlreadyExistsException e) {
-        return new ResponseEntity<String>("Usuário já foi atribuído a esta User Story.", HttpStatus.CONFLICT);
-        } catch (StatusException e) {
-            return new ResponseEntity<String>("UserStory já está finalizada.", HttpStatus.CONFLICT);
         }
-=======
-        }
-
->>>>>>> 78d1c0aebfd1f841853c4d0803020718c64190f4
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
