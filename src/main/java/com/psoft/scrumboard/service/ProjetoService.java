@@ -76,12 +76,6 @@ public class ProjetoService {
         return projeto.getNome();
     }
 
-
-    public boolean contemProjectKey(Integer projectKey) {
-        return this.projetoRepository.containsProjectKey(projectKey);
-
-    }
-
     public String getInfoProjeto(Integer projectKey) throws ProjetoNotFoundException {
         if (!this.projetoRepository.containsProjectKey(projectKey))
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
