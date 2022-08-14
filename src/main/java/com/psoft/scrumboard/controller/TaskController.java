@@ -38,14 +38,14 @@ public class TaskController {
     }
 
     @RequestMapping(value = "/task/", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoTask(@RequestBody Integer userStoryID, Integer taskID) {
+    public ResponseEntity<?> acessaInfoTask(@RequestParam Integer userStoryID, Integer taskID) {
         String info = this.taskService.getInfoTask(userStoryID, taskID);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaInfoTask(@RequestBody Integer taskId, TaskDTO taskDTO) {
+    @RequestMapping(value = "/task/{taskId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizaInfoTask(@PathVariable  Integer taskId, @RequestBody TaskDTO taskDTO) {
 
         String info = this.taskService.updateInfoTask(taskId, taskDTO);
 

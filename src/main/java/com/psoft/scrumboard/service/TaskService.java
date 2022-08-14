@@ -16,16 +16,11 @@ public class TaskService {
     @Autowired
     private ProjetoService projetoService;
     public int criaTask(TaskDTO taskDTO) throws TaskAlreadyExistsException {
-
         Task task = new Task(taskDTO.getTitulo(), taskDTO.getDescricao(), taskDTO.getUserStoryID());
-
         Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(taskDTO.getUserStoryID());
 
         int chave = projeto.getUserStory(taskDTO.getUserStoryID()).getTasks().addTask(task);
 
-        if (projeto.getUserStory(taskDTO.getUserStoryID()).getTasks().containsTaskPorTitulo(taskDTO.getTitulo())) {
-            throw new TaskAlreadyExistsException("Uma task com o mesmo titulo já estra cadastrada nessa US");
-        }
 
         return chave;
     }
