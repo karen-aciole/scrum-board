@@ -32,25 +32,30 @@ public class TaskService {
 
 
     public String deletaTask(Integer userStoryID, Integer taskid) {
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(userStoryID);
-
-        UserStory us = projeto.getUserStory(userStoryID);
+        UserStory us = getUs(userStoryID);
         us.getTasks().delTask(taskid);
 
         return "Task deletada com sucesso";
     }
 
     public String getInfoTask(Integer userStoryID, Integer taskID) {
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(userStoryID);
-
-        UserStory us = projeto.getUserStory(userStoryID);
+        UserStory us = getUs(userStoryID);
         return us.getTasks().getTask(taskID).toString();
     }
 
     public String updateInfoTask(Integer taskId, TaskDTO taskDTO) {
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(taskDTO.getUserStoryID());
+        UserStory us = getUs(taskDTO.getUserStoryID());
 
-        UserStory us = projeto.getUserStory(taskDTO.getUserStoryID());
+        us.getTasks().getTask(taskId).setDescricao(taskDTO.getDescricao());
+        us.getTasks().getTask(taskId).setTitulo(taskDTO.getTitulo());
+
         return us.getTasks().getTask(taskId).toString();
+    }
+
+    public UserStory getUs(Integer userStoryId){
+        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(userStoryId);
+        UserStory us = projeto.getUserStory(userStoryId);
+
+        return us;
     }
 }

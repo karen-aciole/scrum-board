@@ -18,7 +18,7 @@ public class Task {
     }
 
     public String getDescricao() {
-        return descricao;
+        return this.descricao;
     }
 
     public String getTitulo() {
