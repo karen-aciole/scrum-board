@@ -41,8 +41,8 @@ public class UsuarioService {
 	public String updateInfoUsuario(UsuarioDTO usuarioDTO) {
 		Usuario usuario = this.usuarioRepository.getUser(usuarioDTO.getUsername());
 		
-		usuario.setNomeCompleto(usuarioDTO.getNomeCompleto());
-		usuario.setEmail(usuarioDTO.getEmail());
+		usuario.setNomeCompleto(!usuarioDTO.getNomeCompleto().isBlank() ? usuarioDTO.getNomeCompleto() : usuario.getNomeCompleto());
+		usuario.setEmail(!usuarioDTO.getEmail().isBlank() ? usuarioDTO.getEmail() : usuario.getEmail());
 		this.usuarioRepository.updateUser(usuario);
 		
 		return "Usuário atualizado com username '" + usuario.getUsername() + "'";
