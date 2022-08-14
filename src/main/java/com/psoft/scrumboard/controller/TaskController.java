@@ -37,23 +37,17 @@ public class TaskController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/{taskID}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoTask(@PathVariable String taskID) {
-
-
-        String info = this.taskService.getInfoTask(taskID);
+    @RequestMapping(value = "/task/", method = RequestMethod.GET)
+    public ResponseEntity<?> acessaInfoTask(@RequestBody Integer userStoryID, Integer taskID) {
+        String info = this.taskService.getInfoTask(userStoryID, taskID);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/{taskID}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaInfoTask(@RequestBody TaskDTO taskDTO) {
+    @RequestMapping(value = "/task/", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizaInfoTask(@RequestBody Integer taskId, TaskDTO taskDTO) {
 
-        if (!(this.taskService.contemUsername(taskDTO.getUsername()))) {
-            return new ResponseEntity<String>("Usuário não está cadastrado no sistema - taskID inválido", HttpStatus.CONFLICT);
-        }
-
-        String info = this.taskService.updateInfoTask(taskDTO);
+        String info = this.taskService.updateInfoTask(taskId, taskDTO);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }

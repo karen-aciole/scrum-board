@@ -1,7 +1,6 @@
 package com.psoft.scrumboard.model;
 
 public class Task {
-    private Integer id;
     private String titulo;
     private String descricao;
     private Integer userStoryID;
@@ -26,16 +25,24 @@ public class Task {
         return titulo;
     }
 
-    public boolean getStatus(){
-        return status;
+    public String getStatus(){
+        if(this.status == false){
+            return "Não realizada";
+        } else {
+            return "Realizada";
+        }
     }
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setStatus() {
+        if(this.status == false){
+            this.status = true;
+        } else {
+            this.status = false;
+        }
     }
 
     public void setUserStoryID(Integer userStoryID) {
@@ -44,5 +51,14 @@ public class Task {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public String toString() {
+        String userInfo = "Informações da task de titulo '" + this.titulo + "'\n"
+                + "Descricao: " + this.descricao + "\n"
+                + "userStory ID: " + this.userStoryID + "\n"
+                + "Status: " + this.getStatus();
+
+        return userInfo;
     }
 }

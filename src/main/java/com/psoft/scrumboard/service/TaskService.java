@@ -40,7 +40,17 @@ public class TaskService {
         return "Task deletada com sucesso";
     }
 
-    public String getInfoTask(String taskID) {
-        
+    public String getInfoTask(Integer userStoryID, Integer taskID) {
+        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(userStoryID);
+
+        UserStory us = projeto.getUserStory(userStoryID);
+        return us.getTasks().getTask(taskID).toString();
+    }
+
+    public String updateInfoTask(Integer taskId, TaskDTO taskDTO) {
+        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(taskDTO.getUserStoryID());
+
+        UserStory us = projeto.getUserStory(taskDTO.getUserStoryID());
+        return us.getTasks().getTask(taskId).toString();
     }
 }
