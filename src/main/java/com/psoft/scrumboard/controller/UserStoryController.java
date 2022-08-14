@@ -4,17 +4,12 @@ import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.exception.*;
-import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
