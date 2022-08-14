@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.service;
 
+import com.psoft.scrumboard.dto.MudaStatusTaskDTO;
 import com.psoft.scrumboard.dto.TaskDTO;
 import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.model.Projeto;
@@ -70,9 +71,16 @@ public class TaskService {
         return task;
     }
 
-    public String mudaStatusTask(Integer taskId, Integer userStoryID) throws UserStoryNotFoundException, TaskNotFoundException {
-        Task task = getTask(taskId, userStoryID);
-        
+    public String mudaStatusTask(MudaStatusTaskDTO mudaStatusTaskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+        Task task = getTask(mudaStatusTaskDTO.getTaskKey(), mudaStatusTaskDTO.getIdUserStory());
+        UserStory us = getUs(mudaStatusTaskDTO.getIdUserStory());
+        String scrumMasterName = this.projetoService.getScrumMasterName(mudaStatusTaskDTO.getProjectKey());
+
+
+        if (!us.getResponsaveis().containsUsername(mudaStatusTaskDTO.getUsername()) && !scrumMasterName.equals(mudaStatusTaskDTO.getUsername())) {
+            throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
+        }
+
         task.setStatus();
 
         return "Status alterado com sucesso";

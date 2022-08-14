@@ -1,9 +1,11 @@
 package com.psoft.scrumboard.controller;
 
+import com.psoft.scrumboard.dto.MudaStatusTaskDTO;
 import com.psoft.scrumboard.dto.TaskDTO;
 import com.psoft.scrumboard.exception.TaskAlreadyExistsException;
 import com.psoft.scrumboard.exception.TaskNotFoundException;
 import com.psoft.scrumboard.exception.UserStoryNotFoundException;
+import com.psoft.scrumboard.exception.UsuarioNotAllowedException;
 import com.psoft.scrumboard.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,10 +56,10 @@ public class TaskController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/task/{taskId}/{userStoryID}", method = RequestMethod.PUT)
-    public ResponseEntity<?> mudaStatusTask(@PathVariable  Integer taskId, Integer userStoryID) throws UserStoryNotFoundException, TaskNotFoundException {
+    @RequestMapping(value = "/task/", method = RequestMethod.PUT)
+    public ResponseEntity<?> mudaStatusTask(@RequestBody MudaStatusTaskDTO mudaStatusTask) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
 
-        String info = this.taskService.mudaStatusTask(taskId, userStoryID);
+        String info = this.taskService.mudaStatusTask(mudaStatusTask);
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
