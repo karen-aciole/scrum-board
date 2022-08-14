@@ -121,16 +121,36 @@ public class UserStoryController {
 
     @RequestMapping(value = "/userstory/mudaStatusWorkInProgressparaToVerify", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody MudaStatusDTO mudaStatusDTO) {
+        String info;
+        try {
+            info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
 
-        String info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("O Scrum Master informado não possui autorização para mudar status nesse projeto.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userstory/mudaStatusToVerifyParaDone", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) {
+        String info;
 
-        String info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
+        try {
+            info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("O Scrum Master informado não possui autorização para mudar status nesse projeto.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
