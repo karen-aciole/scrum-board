@@ -5,6 +5,7 @@ import com.psoft.scrumboard.dto.ProjetoDTO;
 import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.model.Integrante;
 import com.psoft.scrumboard.model.Projeto;
+import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.model.Usuario;
 import com.psoft.scrumboard.model.papel.Papel;
 import com.psoft.scrumboard.model.enums.PapelEnum;
@@ -132,5 +133,15 @@ public class ProjetoService {
         return "Projeto atualizado com nome: '" + projeto.getNome() + "',\ndescricao: '" + projeto.getDescricao() + "'\n" +
                 "Instituicao parceira: '" + projeto.getInstituicaoParceira() + "'\nScrum Master: " + projetoDTO.getScrumMasterName();
 
+    }
+
+    public Projeto encontraProjetoPorIDUserStory(Integer id){
+        for(Projeto projeto: this.projetoRepository.getProjetos()){
+            if(projeto.getUserStoryRepository().containsUserStory(id)){
+                return projeto;
+            }
+        }
+
+        return null;
     }
 }

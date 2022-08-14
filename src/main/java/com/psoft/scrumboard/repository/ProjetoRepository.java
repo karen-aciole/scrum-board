@@ -3,6 +3,7 @@ package com.psoft.scrumboard.repository;
 import com.psoft.scrumboard.model.Projeto;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -31,6 +32,10 @@ public class ProjetoRepository {
 
     public Projeto getProjeto(Integer projectKey) {
         return this.projetos.get(projectKey);
+    }
+
+    public Collection<Projeto> getProjetos() {
+        return this.projetos.values();
     }
 
     public void delProject(Integer projectKey) {
