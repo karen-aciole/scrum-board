@@ -17,7 +17,8 @@ public class UsuarioService {
 	
 	public String criaUsuario(UsuarioDTO usuarioDTO) throws UsuarioAlreadyExistsException {
 
-		if (contemUsername(usuarioDTO.getUsername())) throw new UsuarioAlreadyExistsException("Usuário já cadastrado no sistema - username não disponível");
+		if (contemUsername(usuarioDTO.getUsername()))
+			throw new UsuarioAlreadyExistsException("Usuário já cadastrado no sistema - username não disponível");
 
 		Usuario usuario = new Usuario(usuarioDTO.getNomeCompleto(),
 				                      usuarioDTO.getUsername(),
@@ -32,13 +33,19 @@ public class UsuarioService {
 		return this.usuarioRepository.containsUsername(username);
 	}
 	
-	public String getInfoUsuario(String username) {
+	public String getInfoUsuario(String username) throws UsuarioNotFoundException {
+		if (!contemUsername(username))
+			throw new UsuarioNotFoundException("Usuário não encontrado no sistema");
+
 		Usuario usuario = this.usuarioRepository.getUser(username);
 		
 		return usuario.toString();
 	}
 	
-	public String updateInfoUsuario(UsuarioDTO usuarioDTO) {
+	public String updateInfoUsuario(UsuarioDTO usuarioDTO) throws UsuarioNotFoundException {
+		if (!contemUsername(usuarioDTO.getUsername()))
+			throw new UsuarioNotFoundException("Usuário não encontrado no sistema");
+
 		Usuario usuario = this.usuarioRepository.getUser(usuarioDTO.getUsername());
 		
 		usuario.setNomeCompleto(!usuarioDTO.getNomeCompleto().isBlank() ? usuarioDTO.getNomeCompleto() : usuario.getNomeCompleto());
@@ -48,7 +55,10 @@ public class UsuarioService {
 		return "Usuário atualizado com username '" + usuario.getUsername() + "'";
 	}
 	
-	public String deletaUsuario(String username) {
+	public String deletaUsuario(String username) throws UsuarioNotFoundException {
+		if (!contemUsername(username))
+			throw new UsuarioNotFoundException("Usuário não encontrado no sistema");
+
 		Usuario usuario = this.usuarioRepository.getUser(username);
 		
 		this.usuarioRepository.delUser(username);

@@ -2,6 +2,7 @@ package com.psoft.scrumboard.controller;
 
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.exception.UsuarioAlreadyExistsException;
+import com.psoft.scrumboard.exception.UsuarioNotFoundException;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,37 +42,40 @@ public class UsuarioController {
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET)
 	public ResponseEntity<?> acessaInfoUsuario(@PathVariable String username) {
-		
-		if (!(this.usuarioService.contemUsername(username))) {
-			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		String info;
+
+		try {
+			info = this.usuarioService.getInfoUsuario(username);
+		} catch (UsuarioNotFoundException e) {
+			return new ResponseEntity<String>("Usuário não encontrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
-		
-		String info = this.usuarioService.getInfoUsuario(username);
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);		
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.PUT)
 	public ResponseEntity<?> atualizaInfoUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+		String info;
 
-		if (!(this.usuarioService.contemUsername(usuarioDTO.getUsername()))) {
-			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		try {
+			info = this.usuarioService.updateInfoUsuario(usuarioDTO);
+		} catch (UsuarioNotFoundException e) {
+			return new ResponseEntity<String>("Usuário não encontrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
-		
-		String info = this.usuarioService.updateInfoUsuario(usuarioDTO);
 		
 		return new ResponseEntity<String>(info, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/usuario/{username}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> removeUsuario(@PathVariable String username) {
-		
-		if (!(this.usuarioService.contemUsername(username))) {
-			return new ResponseEntity<String>("Usuário não está cadastrado no sistema - username inválido", HttpStatus.CONFLICT);
+		String info;
+
+		try {
+			info = this.usuarioService.deletaUsuario(username);
+		} catch (UsuarioNotFoundException e) {
+			return new ResponseEntity<String>("Usuário não encontrado no sistema - username inválido", HttpStatus.CONFLICT);
 		}
-		
-		String info = this.usuarioService.deletaUsuario(username);
-		
+
 		return new ResponseEntity<String>(info, HttpStatus.OK);		
 	}
 	
