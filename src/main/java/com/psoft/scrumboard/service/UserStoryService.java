@@ -348,22 +348,23 @@ public class UserStoryService {
         }
 
 
-    public String listaRelatorioDeUsersStories(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotFoundException {
+    public String listaRelatorioDeUsersStories(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
         } else if (!(this.projetoService.contemIntegrante(projectKey, username))) {
             throw new UsuarioNotFoundException("Usuário não é integrante deste projeto");
-        }  else if (!(this.projetoService.getIntegranteByUserName(projectKey, username).getPapel()).equals(PapelEnum.PRODUCT_OWNER)) {
-            throw new UsuarioNotFoundException("Apenas Product Owners podem requisitar este relatório");
+        }  else if (!this.projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER)) {
+            throw new UsuarioNotAllowedException("Apenas Product Owners podem requisitar este relatório");
         }
 
         int userStoriesTotal = getTotalDeUserStoriesByProject(projectKey);
 
-
+        int totalUserStoriesToDo = listAllUserStoriesByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.TO_DO).size();
         int totalUserStoriesWorkInProgress = listAllUserStoriesByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.WORK_IN_PROGRESS).size();
         int totalUserStoriesToVerify = listAllUserStoriesByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.TO_VERIFY).size();
         int totalUserStoriesDone = listAllUserStoriesByEstagioDesenvolvimento(projectKey, EstagioDesenvolvimentoEnum.DONE).size();
 
+        String percentualUserStoriesToDo = String.format("%.2f", ( (float) totalUserStoriesToDo / userStoriesTotal) * 100) ;
         String percentualUserStoriesWorkInProgress = String.format("%.2f", ( (float) totalUserStoriesWorkInProgress / userStoriesTotal) * 100) ;
         String percentualUserStoriesToVerify = String.format("%.2f", ( (float) totalUserStoriesToVerify / userStoriesTotal) * 100) ;
         String percentualUserStoriesDone = String.format("%.2f", ( (float) totalUserStoriesDone / userStoriesTotal) * 100) ;
@@ -371,9 +372,10 @@ public class UserStoryService {
         if (userStoriesTotal == 0)
             return "Não há User Stories atribuídas a esse projeto.";
 
-        return "Percentual e total de User Stories em cada estágio de desenvolvimento: \n" +
-                "Work In Progress: " + percentualUserStoriesWorkInProgress + " esse percentual representa um total de: " + totalUserStoriesWorkInProgress + " User Storys\n" +
-                "To Verify: " + percentualUserStoriesToVerify + " esse percentual representa um total de: " + totalUserStoriesToVerify + " User Storys\n" +
-                "Done: " + percentualUserStoriesDone + " esse percentual representa um total de: " +  totalUserStoriesDone + "User Storys\n";
+        return "Percentual e total de User Stories em cada estágio de desenvolvimento: \n\n" +
+                "To Do: " + percentualUserStoriesToDo + "% esse percentual representa um total de: " + totalUserStoriesToDo + " User Storys\n" +
+                "Work In Progress: " + percentualUserStoriesWorkInProgress + "% esse percentual representa um total de: " + totalUserStoriesWorkInProgress + " User Storys\n" +
+                "To Verify: " + percentualUserStoriesToVerify + "% esse percentual representa um total de: " + totalUserStoriesToVerify + " User Storys\n" +
+                "Done: " + percentualUserStoriesDone + "% esse percentual representa um total de: " +  totalUserStoriesDone + " User Storys\n";
     }
 }

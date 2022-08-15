@@ -146,28 +146,44 @@ public class UserStoryController {
     }
 
     @RequestMapping(value = "/userstory/mudaStatusToVerifyParaDone", method = RequestMethod.PUT)
-    public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) throws ProjetoNotFoundException, StatusException, UserStoryNotFoundException, UsuarioNotAllowedException {
+    public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) {
         String info;
 
-        info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
+        try {
+            info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("O Scrum Master informado não possui autorização para mudar status nesse projeto.", HttpStatus.CONFLICT);
+        } catch (StatusException e) {
+            return new ResponseEntity<String>("A US não se encontra no estágio de desenvolvimento 'To Verify'.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
-    public ResponseEntity<?> relatorioDescritosDeUserStoriesAtribuidasAUsuario(@PathVariable Integer projectKey, @PathVariable String username) throws ProjetoNotFoundException, UsuarioNotFoundException {
+    public ResponseEntity<?> relatorioDescritosDeUserStoriesAtribuidasAUsuario(@PathVariable Integer projectKey, @PathVariable String username) {
         String info;
 
-        info = this.userStoryService.listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, username);
+        try {
+            info = this.userStoryService.listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, username);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
-    public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String username) throws ProjetoNotFoundException, UsuarioNotFoundException {
+    @RequestMapping(value = "/userStory/relatorio/{projectKey}/{productOwnerName}", method = RequestMethod.GET)
+    public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String productOwnerName) throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
         String info;
 
-        info = this.userStoryService.listaRelatorioDeUsersStories(projectKey, username);
+        info = this.userStoryService.listaRelatorioDeUsersStories(projectKey, productOwnerName);
 
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
