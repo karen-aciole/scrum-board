@@ -179,4 +179,13 @@ public class UserStoryController {
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/userStory/relatorio/{projectKey}/{productOwnerName}", method = RequestMethod.GET)
+    public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String productOwnerName) throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+        String info;
+
+        info = this.userStoryService.listaRelatorioDeUsersStories(projectKey, productOwnerName);
+
+        return new ResponseEntity<>(info, HttpStatus.OK);
+    }
+
 }

@@ -45,9 +45,6 @@ public class ProjetoService {
         return this.projetoRepository.addProjeto(projeto);
     }
 
-    public boolean contemProjectname(String projectName) {
-        return this.projetoRepository.containsProjectname(projectName);
-    }
 
 
     public String adicionaDesenvolvedor(AdicionaIntegranteDTO adicionaIntegranteDTO)
@@ -105,6 +102,10 @@ public class ProjetoService {
     
     public boolean contemIntegrante(Integer projectKey, String username) {
     	return this.projetoRepository.getProjeto(projectKey).contemIntegrante(username);
+    }
+
+    public Integrante getIntegranteByUserName(Integer id, String userName){
+        return this.projetoRepository.getProjeto(id).getIntegranteRepository().getIntegrante(userName);
     }
 
     public String updateInfoProjeto(Integer key, ProjetoDTO projetoDTO)
