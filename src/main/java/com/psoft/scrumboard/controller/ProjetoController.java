@@ -43,7 +43,7 @@ public class ProjetoController {
     public ResponseEntity<?> adicionaIntegrante(@RequestBody AdicionaIntegranteDTO adicionaIntegranteDTO) {
 
         try {
-            this.projetoService.adicionaDesenvolvedor(adicionaIntegranteDTO);
+            this.projetoService.adicionaIntegrante(adicionaIntegranteDTO);
         } catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não cadastrado no sistema - projectname invalido", HttpStatus.CONFLICT);
         } catch (UsuarioNotFoundException e) {
