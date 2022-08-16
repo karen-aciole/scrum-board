@@ -126,9 +126,9 @@ public class UserStoryController {
 
     @RequestMapping(value = "/userstory/mudaStatusWorkInProgressparaToVerify", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusWorkInProgressparaToVerify(@RequestBody MudaStatusDTO mudaStatusDTO) {
-        String info;
+
         try {
-            info = this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
+            this.userStoryService.mudaStatusWorkInProgressParaToVerify(mudaStatusDTO);
 
         } catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
@@ -142,15 +142,14 @@ public class UserStoryController {
             return new ResponseEntity<String>("A US não se encontra no estágio de desenvolvimento 'Work In Progress'.", HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity<String>(info, HttpStatus.OK);
+        return new ResponseEntity<String>("Status alterado com sucesso!", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userstory/mudaStatusToVerifyParaDone", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusToVerifyParaDone(@RequestBody MudaStatusDTO mudaStatusDTO) {
-        String info;
 
         try {
-            info = this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
+            this.userStoryService.mudaStatusToVerifyParaDone(mudaStatusDTO);
         } catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
@@ -161,7 +160,7 @@ public class UserStoryController {
             return new ResponseEntity<String>("A US não se encontra no estágio de desenvolvimento 'To Verify'.", HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity<String>(info, HttpStatus.OK);
+        return new ResponseEntity<String>("Status alterado com sucesso!", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
