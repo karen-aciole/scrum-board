@@ -276,6 +276,10 @@ public class UserStoryService {
         int totalUserStoriesToVerifyByUsuario = getTotalUserStoriesFromUserByStatusToVerify(projectKey, username);
         int totalUserStoriesDoneByUsuario = getTotalUserStoriesFromUserByStatusDone(projectKey, username);
 
+        String percentualUserStoriesWorkInProgress = String.format("%.2f", ((float) totalUserStoriesWorkInProgressByUsuario / userStoriesByUsuario) * 100);
+        String percentualUserStoriesToVerify = String.format("%.2f", ((float) totalUserStoriesToVerifyByUsuario / userStoriesByUsuario) * 100);
+        String percentualUserStoriesDone = String.format("%.2f", ((float) totalUserStoriesDoneByUsuario / userStoriesByUsuario) * 100);
+
 
         if (percentualUserStoriesByUsuario == 0)
             return "Não há User Stories atribuídas para o usuário: " + username;
@@ -283,9 +287,9 @@ public class UserStoryService {
         return "Percentual de User Stories do usuário " + username + ": " + percentualUserStoriesByUsuarioFormatado + "%\n" +
                 "Total de User Stories atribuídas ao usuário: " + userStoriesByUsuario + "/" + userStoriesTotal + "\n" +
                 "Percentual de User Stories do usuário em cada estágio de desenvolvimento: \n" +
-                "Work In Progress: " + totalUserStoriesWorkInProgressByUsuario + "\n" +
-                "To Verify: " + totalUserStoriesToVerifyByUsuario + "\n" +
-                "Done: " + totalUserStoriesDoneByUsuario + "\n";
+                "Work In Progress: " + percentualUserStoriesWorkInProgress + "% esse percentual representa um total de: " + totalUserStoriesWorkInProgressByUsuario + " User Storys\n" +
+                "To Verify: " + percentualUserStoriesToVerify + "% esse percentual representa um total de: " + totalUserStoriesToVerifyByUsuario + " User Storys\n" +
+                "Done: " + percentualUserStoriesDone + "% esse percentual representa um total de: " + totalUserStoriesDoneByUsuario + " User Storys\n";
     }
 
     private int getTotalUserStoriesFromUserByStatusWorkInProgress(Integer projectKey, String username) {
