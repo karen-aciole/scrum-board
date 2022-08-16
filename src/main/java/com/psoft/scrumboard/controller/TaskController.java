@@ -69,11 +69,12 @@ public class TaskController {
 
     @RequestMapping(value = "/task/{taskId}/{idUserStory}/{projectKey}/{userName}", method = RequestMethod.PUT)
     public ResponseEntity<?> mudaStatusTask(@PathVariable Integer taskId, @PathVariable Integer idUserStory, @PathVariable Integer projectKey, @PathVariable String userName) {
-
         String info;
         try {
-            info = this.taskService.mudaStatusTask(taskId, idUserStory, userName, projectKey);
-        } catch (TaskNotFoundException | UsuarioNotAllowedException e) {
+            MudaStatusTaskDTO mudaStatusTaskDTO = new MudaStatusTaskDTO(taskId, idUserStory, userName);
+            info = this.taskService.mudaStatusTask(mudaStatusTaskDTO, projectKey);
+        } catch (TaskNotFoundException | UsuarioNotAllowedException | ProjetoNotFoundException | StatusException |
+                 UserStoryNotFoundException | UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Erro ao muda status da task", HttpStatus.CONFLICT);
         }
 

@@ -7,7 +7,7 @@ public class MudaStatusTaskDTO {
 
 
 
-    public MudaStatusTaskDTO(Integer taskId, Integer projectKey,  Integer idUserStory, String username){
+    public MudaStatusTaskDTO(Integer taskId, Integer idUserStory, String username){
         this.idUserStory = idUserStory;
         this.username = username;
         this.taskId = taskId;

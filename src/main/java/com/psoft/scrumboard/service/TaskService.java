@@ -1,16 +1,22 @@
 package com.psoft.scrumboard.service;
 
+import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.MudaStatusTaskDTO;
 import com.psoft.scrumboard.dto.TaskDTO;
 import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Task;
 import com.psoft.scrumboard.model.UserStory;
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
+import com.psoft.scrumboard.repository.TaskRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Collection;
 
 @Service
 public class TaskService {
@@ -23,6 +29,9 @@ public class TaskService {
     private ProjetoRepository projetoRepository;
     @Autowired
     private UserStoryRepository userStoryRepository;
+    @Autowired
+    private TaskRepository taskRepository;
+    private EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository;
 
     public int criaTask(Integer projectKey, TaskDTO taskDTO) throws TaskAlreadyExistsException, UserStoryNotFoundException, UsuarioNotAllowedException {
 
@@ -104,18 +113,37 @@ public class TaskService {
         return task;
     }
 
-    public String mudaStatusTask(Integer taskId, Integer idUserStory, String userName, Integer projetoKey) throws TaskNotFoundException, UsuarioNotAllowedException {
+    public String mudaStatusTask(MudaStatusTaskDTO mudaStatusTaskDTO, Integer projetoKey)
+            throws TaskNotFoundException, UsuarioNotAllowedException, ProjetoNotFoundException, StatusException, UserStoryNotFoundException, UsuarioNotFoundException {
+
         Projeto projeto = this.projetoRepository.getProjeto(projetoKey);
-        UserStory userStory = projeto.getUserStory(idUserStory);
-        Task task = getTask(taskId, idUserStory, projetoKey);
+        UserStory userStory = projeto.getUserStory(mudaStatusTaskDTO.getIdUserStory());
+        Task task = getTask(mudaStatusTaskDTO.getTaskKey(), mudaStatusTaskDTO.getIdUserStory(), projetoKey);
         String scrumMasterName = projeto.getScrumMaster().getUsuario().getUsername();
 
-        if (!userStory.getResponsaveis().containsUsername(userName) && !scrumMasterName.equals(userName)) {
+        if (!userStory.getResponsaveis().containsUsername(mudaStatusTaskDTO.getUsername()) && !scrumMasterName.equals(mudaStatusTaskDTO.getUsername())) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
 
         task.setStatus();
 
+        if (isAllTasksFinished(projetoKey, userStory.getId())) {
+            this.userStoryService.mudaStatusWorkInProgressParaToVerify(new MudaStatusDTO(projetoKey, mudaStatusTaskDTO.getIdUserStory(), mudaStatusTaskDTO.getUsername()));
+        }
+
         return "Status alterado com sucesso";
+    }
+
+    private boolean isAllTasksFinished(Integer projectKey, Integer idUserStory) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory userStory = projeto.getUserStory(idUserStory);
+        Collection<Task> listTasks = userStory.getTasks().getAllTasksByIdUserStory(idUserStory);
+
+        int tasksFinalizadas = 0;
+        for (Task task : listTasks)
+            if (task.getStatus().equals("Realizada"))
+                tasksFinalizadas++;
+
+        return tasksFinalizadas == listTasks.size();
     }
 }

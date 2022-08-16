@@ -1,6 +1,7 @@
 package com.psoft.scrumboard.repository;
 
 import com.psoft.scrumboard.model.Task;
+import com.psoft.scrumboard.model.UserStory;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -46,11 +47,10 @@ public class TaskRepository {
 
     public Collection<Task> getAllTasksByIdUserStory(Integer idUserStory) {
         Collection<Task> tasks = new ArrayList<>();
-        for(Task task: this.tasks.values()){
-            if(task.getUserStoryID().equals(idUserStory)){
+        for (Task task: this.tasks.values())
+            if (task.getUserStoryID().equals(idUserStory))
                 tasks.add(task);
-            }
-        }
+
         return tasks;
     }
 }
