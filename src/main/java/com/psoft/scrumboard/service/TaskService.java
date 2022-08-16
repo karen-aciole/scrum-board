@@ -85,8 +85,8 @@ public class TaskService {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
 
-        task.setDescricao(taskDTO.getDescricao());
-        task.setTitulo(taskDTO.getTitulo());
+        task.setDescricao(!taskDTO.getDescricao().isBlank() ? taskDTO.getDescricao() : task.getDescricao());
+        task.setTitulo(!taskDTO.getTitulo().isBlank() ? taskDTO.getTitulo() : task.getTitulo());
 
         return us.getTasks().getTask(taskId).toString();
     }
