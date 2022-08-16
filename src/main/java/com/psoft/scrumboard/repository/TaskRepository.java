@@ -37,12 +37,7 @@ public class TaskRepository {
     }
 
     public Task getTask(Integer id) {
-        if(this.tasks.containsKey(id)){
-            return this.tasks.get(id);
-        } else {
-            return null;
-        }
-
+       return this.tasks.get(id);
     }
 
     public void delTask(Integer id) {
