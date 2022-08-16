@@ -382,4 +382,21 @@ public class UserStoryService {
                 "To Verify: " + percentualUserStoriesToVerify + "% esse percentual representa um total de: " + totalUserStoriesToVerify + " User Storys\n" +
                 "Done: " + percentualUserStoriesDone + "% esse percentual representa um total de: " + totalUserStoriesDone + " User Storys\n";
     }
+
+    public String listaRelatorioDeUsersStoriesDeUmProjeto(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotAllowedException, UsuarioNotFoundException {
+        if (!this.projetoRepository.containsProjectKey(projectKey)) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(username))) {
+            throw new UsuarioNotAllowedException("Usuário não é o Scrum Master deste projeto");
+        }
+
+        String relatorio = "";
+
+        for(String integrante: this.projetoRepository.getProjeto(projectKey).getIntegranteRepository().getIntegrantes()){
+            relatorio += listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, integrante) + "\n";
+        }
+
+        return relatorio;
+
+    }
 }
