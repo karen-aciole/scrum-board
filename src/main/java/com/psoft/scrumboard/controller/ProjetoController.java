@@ -71,15 +71,17 @@ public class ProjetoController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/projeto/{projectKey}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeProjeto(@PathVariable Integer projectKey) {
+    @RequestMapping(value = "/projeto/{projectKey}/{scrumMaster}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> removeProjeto(@PathVariable Integer projectKey, @PathVariable String scrumMaster) {
 
         String info;
 
         try {
-            info = this.projetoService.deletaProjeto(projectKey);
+            info = this.projetoService.deletaProjeto(projectKey, scrumMaster);
         } catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não cadastrado no sistema - projectKey inválido", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Scrum Master informado não tem permissão para deletar este projeto.", HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);

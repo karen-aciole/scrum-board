@@ -100,13 +100,18 @@ public class ProjetoService {
         return scrumMastername;
     }
 
-    public String deletaProjeto(Integer projectKey) throws ProjetoNotFoundException {
+    public String deletaProjeto(Integer projectKey, String scrumMasterUsername) throws ProjetoNotFoundException, UsuarioNotAllowedException {
+        String scrumMaster = this.getScrumMasterName(projectKey);
+
         if (!this.projetoRepository.containsProjectKey(projectKey))
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+        else if (!scrumMaster.equals(scrumMasterUsername)) {
+            throw new UsuarioNotAllowedException("O Scrum Master informado não possui autorização para deletar este projeto.");
+        }
 
         this.projetoRepository.delProject(projectKey);
 
-        return "Projeto removido com nome '" + projectKey + "'";
+        return "Projeto removido com key '" + projectKey + "'";
     }
     
     public boolean contemIntegrante(Integer projectKey, String username) {
