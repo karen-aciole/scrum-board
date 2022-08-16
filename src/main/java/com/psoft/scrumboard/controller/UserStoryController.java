@@ -188,4 +188,20 @@ public class UserStoryController {
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/userStory/{projectKey}/{username}/relatorioGeral", method = RequestMethod.GET)
+    public ResponseEntity<?> relatorioDescritivosDeTodoOProjeto(@PathVariable Integer projectKey, @PathVariable String username) {
+        String info;
+
+        try {
+            info = this.userStoryService.listaRelatorioDeUsersStoriesDeUmProjeto(projectKey, username);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity<>(info, HttpStatus.OK);
+    }
 }
