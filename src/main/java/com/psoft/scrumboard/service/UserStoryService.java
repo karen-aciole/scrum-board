@@ -10,9 +10,13 @@ import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 import com.psoft.scrumboard.model.enums.PapelEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.model.listener.UserStoryListener;
+import com.psoft.scrumboard.model.listener.UsuarioListener;
 import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
+import com.psoft.scrumboard.repository.observer.UserStorySource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -31,6 +35,9 @@ public class UserStoryService {
 
     @Autowired
     private ProjetoService projetoService;
+    
+    @Autowired
+    private UserStorySource userStorySource;
 
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryAlreadyExistsException, ProjetoNotFoundException {
 
@@ -82,6 +89,7 @@ public class UserStoryService {
         userStory.setTitulo(userStoryDTO.getTitulo());
 
         this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().addUserStory(userStory);
+        this.userStorySource.mudouDescricao(projectKey, userStory);
 
         return "UserStory atualizado com titulo '" + userStory.getTitulo() + "'";
 
@@ -216,6 +224,7 @@ public class UserStoryService {
                 .getEstagioDesenvolvimentoByEnum(estagio);
 
         us.setEstagioDesenvolvimentoEnum(estagioDesenvolvimento);
+        this.userStorySource.mudouEstagio(mudaStatus.getProjectKey(), us);
 
         return "Status alterado com sucesso";
     }
@@ -378,4 +387,30 @@ public class UserStoryService {
                 "To Verify: " + percentualUserStoriesToVerify + "% esse percentual representa um total de: " + totalUserStoriesToVerify + " User Storys\n" +
                 "Done: " + percentualUserStoriesDone + "% esse percentual representa um total de: " +  totalUserStoriesDone + " User Storys\n";
     }
+    
+    public String addInscricaoUsuario(MudaStatusDTO inscricaoDTO)
+    		throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException {
+    	
+    	if (!this.projetoRepository.containsProjectKey(inscricaoDTO.getProjectKey())) {
+    		throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
+    	}
+    	
+    	Projeto projeto = this.projetoRepository.getProjeto(inscricaoDTO.getProjectKey());
+    	
+    	if (!this.contemUserStory(inscricaoDTO.getProjectKey(), inscricaoDTO.getIdUserStory())) {
+    		throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
+    	}
+    	
+    	UserStory us = projeto.getUserStoryRepository().getUserStory(inscricaoDTO.getIdUserStory());
+        
+        if (!(us.getResponsaveis().containsUsername(inscricaoDTO.getUsername()))) {
+            throw new UsuarioNotFoundException("Usuário não é um dos responsáveis por essa user story.");
+        }
+        
+        UserStoryListener usuario = new UsuarioListener(inscricaoDTO.getUsername());
+        this.userStorySource.addListener(usuario);
+    	
+        return "Inscrição realizada!";
+    }
+    
 }

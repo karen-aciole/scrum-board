@@ -164,7 +164,7 @@ public class UserStoryController {
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/userstory/{projectKey}/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> relatorioDescritosDeUserStoriesAtribuidasAUsuario(@PathVariable Integer projectKey, @PathVariable String username) {
         String info;
 
@@ -179,13 +179,30 @@ public class UserStoryController {
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userStory/relatorio/{projectKey}/{productOwnerName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/userstory/relatorio/{projectKey}/{productOwnerName}", method = RequestMethod.GET)
     public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String productOwnerName) throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
         String info;
 
         info = this.userStoryService.listaRelatorioDeUsersStories(projectKey, productOwnerName);
 
         return new ResponseEntity<>(info, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/userstory/inscricao-usuario", method = RequestMethod.POST)
+    public ResponseEntity<?> inscreveUsuarioUserStory(@RequestBody MudaStatusDTO inscricaoDTO) {
+    	String info;
+    	
+    	try {
+    		info = this.userStoryService.addInscricaoUsuario(inscricaoDTO);
+    	} catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - id inválido.", HttpStatus.CONFLICT);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        }
+    	
+    	return new ResponseEntity<>(info, HttpStatus.OK);
     }
 
 }
