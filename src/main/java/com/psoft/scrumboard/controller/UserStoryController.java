@@ -180,10 +180,18 @@ public class UserStoryController {
     }
 
     @RequestMapping(value = "/userStory/relatorio/{projectKey}/{productOwnerName}", method = RequestMethod.GET)
-    public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String productOwnerName) throws ProjetoNotFoundException, UsuarioNotFoundException, UsuarioNotAllowedException {
+    public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String productOwnerName) {
         String info;
 
-        info = this.userStoryService.listaRelatorioDeUsersStories(projectKey, productOwnerName);
+        try {
+            info = this.userStoryService.listaRelatorioDeUsersStories(projectKey, productOwnerName);
+        } catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Apenas Product Owners podem requisitar este relatório.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
