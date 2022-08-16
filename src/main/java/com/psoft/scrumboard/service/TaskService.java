@@ -124,6 +124,9 @@ public class TaskService {
         if (!userStory.getResponsaveis().containsUsername(mudaStatusTaskDTO.getUsername()) && !scrumMasterName.equals(mudaStatusTaskDTO.getUsername())) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
+        if (userStory.getEstagioDesenvolvimento().equals(EstagioDesenvolvimentoEnum.TO_DO)) {
+            return ("Não é possível finalizar task. Pois não há nenhum usuário atribuído a ela");
+        }
 
         task.setStatus();
 
