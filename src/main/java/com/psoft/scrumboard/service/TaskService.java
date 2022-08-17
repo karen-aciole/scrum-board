@@ -7,12 +7,15 @@ import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Task;
 import com.psoft.scrumboard.model.UserStory;
+import com.psoft.scrumboard.model.event.UserStoryEvent;
+import com.psoft.scrumboard.repository.observer.UserStorySource;
 import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.TaskRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +26,25 @@ public class TaskService {
 
     @Autowired
     private UserStoryService userStoryService;
+    
     @Autowired
     private ProjetoService projetoService;
+    
+    @Autowired
+    private UserStorySource userStorySource;
+    
     @Autowired
     private ProjetoRepository projetoRepository;
+    
     @Autowired
     private UserStoryRepository userStoryRepository;
+    
     @Autowired
     private TaskRepository taskRepository;
+    
+    @Autowired
     private EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository;
-
+    
     public int criaTask(Integer projectKey, TaskDTO taskDTO) throws TaskAlreadyExistsException, UserStoryNotFoundException, UsuarioNotAllowedException {
 
         Projeto projeto = this.projetoRepository.getProjeto(projectKey);
@@ -129,6 +141,7 @@ public class TaskService {
         }
 
         task.setStatus();
+        this.userStorySource.marcouTaskRealizada(taskId, task.getStatus());
 
         if (isAllTasksFinished(projetoKey, userStory.getId())) {
             this.userStoryService.mudaStatusWorkInProgressParaToVerify(new MudaStatusDTO(projetoKey, mudaStatusTaskDTO.getIdUserStory(), mudaStatusTaskDTO.getUsername()));

@@ -176,7 +176,7 @@ public class UserStoryController {
         return new ResponseEntity<String>("Status alterado com sucesso!", HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userStory/{projectKey}/{username}", method = RequestMethod.GET)
+    @RequestMapping(value = "/userstory/{projectKey}/{username}", method = RequestMethod.GET)
     public ResponseEntity<?> relatorioDescritosDeUserStoriesAtribuidasAUsuario(@PathVariable Integer projectKey, @PathVariable String username) {
         String info;
 
@@ -190,9 +190,10 @@ public class UserStoryController {
 
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
-
+    
     @RequestMapping(value = "/userStory/relatorio/{projectKey}/{productOwnerName}", method = RequestMethod.GET)
     public ResponseEntity<?> relatorioDescritosDeUserStories(@PathVariable Integer projectKey, @PathVariable String productOwnerName) {
+        
         String info;
 
         try {
@@ -207,9 +208,10 @@ public class UserStoryController {
 
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
-
+    
     @RequestMapping(value = "/userStory/{projectKey}/{username}/relatorioGeral", method = RequestMethod.GET)
     public ResponseEntity<?> relatorioDescritivosDeTodoOProjeto(@PathVariable Integer projectKey, @PathVariable String username) {
+        
         String info;
 
         try {
@@ -226,4 +228,5 @@ public class UserStoryController {
 
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
+    
 }

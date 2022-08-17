@@ -13,6 +13,8 @@ import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
+import com.psoft.scrumboard.repository.observer.UserStorySource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,9 @@ public class UserStoryService {
 
     @Autowired
     private ProjetoService projetoService;
+    
+    @Autowired
+    private UserStorySource userStorySource;
 
     public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO, String username)
             throws UserStoryAlreadyExistsException, ProjetoNotFoundException, UsuarioNotAllowedException {
@@ -68,7 +73,7 @@ public class UserStoryService {
         return userStory.getTitulo();
     }
 
-    private boolean contemUserStory(Integer projectKey, Integer idUserStory) {
+    public boolean contemUserStory(Integer projectKey, Integer idUserStory) {
         if (this.projetoRepository.containsProjectKey(projectKey))
             return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().containsUserStory(idUserStory);
 
@@ -120,11 +125,11 @@ public class UserStoryService {
 
         us.setDescricao(userStoryDTO.getDescricao());
         us.setTitulo(userStoryDTO.getTitulo());
-
+        this.userStorySource.mudouDescricao(projectKey, us);
+        
         this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().addUserStory(us);
-
+        
         return "UserStory atualizado com titulo '" + us.getTitulo() + "'";
-
     }
 
     public String deletaUserStory(Integer projectKey, Integer idUserStory, String username) throws UserStoryNotFoundException, ProjetoNotFoundException, UsuarioNotAllowedException {
@@ -258,7 +263,7 @@ public class UserStoryService {
                 .getEstagioDesenvolvimento();
     }
 
-    private void mudaStatus(MudaStatusDTO mudaStatus, EstagioDesenvolvimentoEnum estagio) {
+    private String mudaStatus(MudaStatusDTO mudaStatus, EstagioDesenvolvimentoEnum estagio) {
 
         Projeto projeto = this.projetoRepository.getProjeto(mudaStatus.getProjectKey());
         UserStory us = projeto.getUserStoryRepository().getUserStory(mudaStatus.getIdUserStory());
@@ -267,6 +272,9 @@ public class UserStoryService {
                 .getEstagioDesenvolvimentoByEnum(estagio);
 
         us.setEstagioDesenvolvimentoEnum(estagioDesenvolvimento);
+        this.userStorySource.mudouEstagio(mudaStatus.getProjectKey(), us);
+        
+        return "Status alterado com sucesso";
     }
 
     public void mudaStatusToVerifyParaDone(MudaStatusDTO mudaStatus)
@@ -289,6 +297,8 @@ public class UserStoryService {
         if (!statusAtual.equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_VERIFY))) {
             throw new StatusException("A US não se encontra no estágio de desenvolvimento 'To Verify'");
         }
+        
+        this.userStorySource.finalizouUserStory(mudaStatus.getProjectKey(), us);
 
         this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.DONE);
     }
@@ -456,4 +466,5 @@ public class UserStoryService {
         return relatorio;
 
     }
+    
 }
