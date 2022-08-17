@@ -43,6 +43,8 @@ public class UserStoryService {
             throw new UserStoryAlreadyExistsException("UserStory já cadastrada no projeto - número não disponível");
         } else if (!this.projetoService.contemIntegrante(projectKey, username)) {
             throw new UsuarioNotAllowedException("Usuário não é integrante deste projeto.");
+        } else if (userStoryDTO.getId() <= 0) {
+            throw new IllegalArgumentException("Número da UserStory inválido - insira um número maior que zero.");
         }
 
         boolean scrumMaster = projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.SCRUM_MASTER);
@@ -431,17 +433,24 @@ public class UserStoryService {
                 "Done: " + percentualUserStoriesDone + "% esse percentual representa um total de: " + totalUserStoriesDone + " User Storys\n";
     }
 
-    public String listaRelatorioDeUsersStoriesDeUmProjeto(Integer projectKey, String username) throws ProjetoNotFoundException, UsuarioNotAllowedException, UsuarioNotFoundException {
+    public String listaRelatorioDeUsersStoriesDeUmProjeto(Integer projectKey, String username)
+            throws ProjetoNotFoundException, UsuarioNotAllowedException, UsuarioNotFoundException, UserStoryNotFoundException {
+
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
         } else if (!(this.projetoService.getScrumMasterName(projectKey).equals(username))) {
             throw new UsuarioNotAllowedException("Usuário não é o Scrum Master deste projeto");
+        } else if (this.getTotalDeUserStoriesByProject(projectKey) == 0) {
+            throw new UserStoryNotFoundException("Não há User Stories atribuídas a esse projeto.");
         }
 
         String relatorio = "";
 
-        for(String integrante: this.projetoRepository.getProjeto(projectKey).getIntegranteRepository().getIntegrantes()){
-            relatorio += listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, integrante) + "\n";
+        for(String integrante: this.projetoRepository.getProjeto(projectKey).getIntegranteRepository().getIntegrantes()) {
+            if (!(this.projetoService.getIntegranteByUserName(projectKey, integrante).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER)
+                    || this.projetoService.getIntegranteByUserName(projectKey, integrante).getPapel().getTipo().equals(PapelEnum.SCRUM_MASTER))) {
+                relatorio += listaRelatorioDeUsersStoriesDeUmUsuario(projectKey, integrante) + "\n";
+            }
         }
 
         return relatorio;

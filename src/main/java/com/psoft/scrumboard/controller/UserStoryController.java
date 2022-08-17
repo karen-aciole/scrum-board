@@ -4,6 +4,7 @@ import com.psoft.scrumboard.dto.AtribuiUserStoryDTO;
 import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.UserStoryDTO;
 import com.psoft.scrumboard.exception.*;
+import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UserStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class UserStoryController {
             return new ResponseEntity<String>("UserStory já cadastrada no projeto - número não disponível", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
             return new ResponseEntity<String>("Usuário não tem permissão para criar UserStory.", HttpStatus.FORBIDDEN);
+        } catch (Exception e) {
+            return new ResponseEntity<String>("Número da UserStory inválido - insira um número maior que zero.", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
@@ -199,7 +202,7 @@ public class UserStoryController {
         } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
-            return new ResponseEntity<String>("Apenas Product Owners podem requisitar este relatório.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("Apenas Product Owners podem requisitar este relatório.", HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<>(info, HttpStatus.OK);
@@ -216,7 +219,9 @@ public class UserStoryController {
         } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
-            throw new RuntimeException(e);
+            return new ResponseEntity<>("Usuário não tem permissão pra acessar relatório geral.", HttpStatus.FORBIDDEN);
+        } catch (UserStoryNotFoundException e) {
+            return new ResponseEntity<String>("Não há UserStories neste projeto.", HttpStatus.CONFLICT);
         }
 
         return new ResponseEntity<>(info, HttpStatus.OK);
