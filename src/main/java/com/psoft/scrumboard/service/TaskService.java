@@ -141,7 +141,7 @@ public class TaskService {
         }
 
         task.setStatus();
-        this.userStorySource.marcouTaskRealizada(taskId, task.getStatus());
+        this.userStorySource.marcouTaskRealizada(mudaStatusTaskDTO.getTaskKey(), task.getStatus());
 
         if (isAllTasksFinished(projetoKey, userStory.getId())) {
             this.userStoryService.mudaStatusWorkInProgressParaToVerify(new MudaStatusDTO(projetoKey, mudaStatusTaskDTO.getIdUserStory(), mudaStatusTaskDTO.getUsername()));
