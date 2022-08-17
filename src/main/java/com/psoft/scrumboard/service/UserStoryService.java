@@ -10,8 +10,6 @@ import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
 import com.psoft.scrumboard.model.enums.PapelEnum;
 import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
-import com.psoft.scrumboard.model.listener.UserStoryListener;
-import com.psoft.scrumboard.model.listener.UsuarioListener;
 import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
 import com.psoft.scrumboard.repository.ProjetoRepository;
 import com.psoft.scrumboard.repository.UserStoryRepository;
@@ -61,7 +59,7 @@ public class UserStoryService {
         return userStory.getTitulo();
     }
 
-    private boolean contemUserStory(Integer projectKey, Integer idUserStory) {
+    public boolean contemUserStory(Integer projectKey, Integer idUserStory) {
         if (this.projetoRepository.containsProjectKey(projectKey))
             return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().containsUserStory(idUserStory);
 
@@ -249,6 +247,8 @@ public class UserStoryService {
         if (!statusAtual.equals(estagioDesenvolvimentoRepository.getEstagioDesenvolvimentoByEnum(EstagioDesenvolvimentoEnum.TO_VERIFY))) {
             throw new StatusException("A US não se encontra no estágio de desenvolvimento 'To Verify'");
         }
+        
+        this.userStorySource.finalizouUserStory(mudaStatus.getProjectKey(), us);
 
         return this.mudaStatus(mudaStatus, EstagioDesenvolvimentoEnum.DONE);
     }
@@ -386,31 +386,6 @@ public class UserStoryService {
                 "Work In Progress: " + percentualUserStoriesWorkInProgress + "% esse percentual representa um total de: " + totalUserStoriesWorkInProgress + " User Storys\n" +
                 "To Verify: " + percentualUserStoriesToVerify + "% esse percentual representa um total de: " + totalUserStoriesToVerify + " User Storys\n" +
                 "Done: " + percentualUserStoriesDone + "% esse percentual representa um total de: " +  totalUserStoriesDone + " User Storys\n";
-    }
-    
-    public String addInscricaoUsuario(MudaStatusDTO inscricaoDTO)
-    		throws ProjetoNotFoundException, UserStoryNotFoundException, UsuarioNotFoundException {
-    	
-    	if (!this.projetoRepository.containsProjectKey(inscricaoDTO.getProjectKey())) {
-    		throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-    	}
-    	
-    	Projeto projeto = this.projetoRepository.getProjeto(inscricaoDTO.getProjectKey());
-    	
-    	if (!this.contemUserStory(inscricaoDTO.getProjectKey(), inscricaoDTO.getIdUserStory())) {
-    		throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
-    	}
-    	
-    	UserStory us = projeto.getUserStoryRepository().getUserStory(inscricaoDTO.getIdUserStory());
-        
-        if (!(us.getResponsaveis().containsUsername(inscricaoDTO.getUsername()))) {
-            throw new UsuarioNotFoundException("Usuário não é um dos responsáveis por essa user story.");
-        }
-        
-        UserStoryListener usuario = new UsuarioListener(inscricaoDTO.getUsername());
-        this.userStorySource.addListener(usuario);
-    	
-        return "Inscrição realizada!";
     }
     
 }

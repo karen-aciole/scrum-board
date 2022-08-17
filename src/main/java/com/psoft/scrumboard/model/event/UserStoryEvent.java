@@ -11,6 +11,10 @@ public class UserStoryEvent {
 	
 	private UserStory userStory;
 	
+	private Integer taskId;
+	
+	private String taskStatus;
+	
 	public UserStoryEvent(UserStorySource userStorySource, Integer projectKey, UserStory userStory) {
 		this.userStorySource = userStorySource;
 		this.projectKey = projectKey;
@@ -27,6 +31,22 @@ public class UserStoryEvent {
 	
 	public Integer getProjectKey() {
 		return this.projectKey;
+	}
+	
+	public void setTaskID(Integer taskId) {
+		this.taskId = taskId;
+	}
+	
+	public Integer getTaskID() {
+		return this.taskId;
+	}
+	
+	public void setTaskStatus(String taskStatus) {
+		this.taskStatus = taskStatus;
+	}
+	
+	public String getTaskStatus() {
+		return this.taskStatus;
 	}
 
 }

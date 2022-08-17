@@ -21,6 +21,18 @@ public class UserStorySource {
 		this.disparaMudouEstagio(userStoryEvent);
 	}
 	
+	public void marcouTaskRealizada(Integer taskId, String taskStatus) {
+		UserStoryEvent userStoryEvent = new UserStoryEvent(this, null, null);
+		userStoryEvent.setTaskID(taskId);
+		userStoryEvent.setTaskStatus(taskStatus);
+		this.disparaMarcouTaskRealizada(userStoryEvent);
+	}
+	
+	public void finalizouUserStory(Integer projectKey, UserStory userStory) {
+		UserStoryEvent userStoryEvent = new UserStoryEvent(this, projectKey, userStory);
+		this.disparafinalizouUserStory(userStoryEvent);
+	}
+	
 	public synchronized void addListener(UserStoryListener listener) {
 		this.listeners.add(listener);
 	}
@@ -49,6 +61,30 @@ public class UserStorySource {
 		
 		for (UserStoryListener userStoryListener : listenersCopy) {
 			userStoryListener.mudouEstagio(userStoryEvent);
+		}
+		
+	}
+	
+	private void disparaMarcouTaskRealizada(UserStoryEvent userStoryEvent) {
+		Collection<UserStoryListener> listenersCopy;
+		synchronized (this) {
+			listenersCopy = (Collection) ((HashSet<UserStoryListener>) listeners).clone();
+		}
+		
+		for (UserStoryListener userStoryListener : listenersCopy) {
+			userStoryListener.marcouTaskRealizada(userStoryEvent);
+		}
+		
+	}
+	
+	private void disparafinalizouUserStory(UserStoryEvent userStoryEvent) {
+		Collection<UserStoryListener> listenersCopy;
+		synchronized (this) {
+			listenersCopy = (Collection) ((HashSet<UserStoryListener>) listeners).clone();
+		}
+		
+		for (UserStoryListener userStoryListener : listenersCopy) {
+			userStoryListener.finalizouUserStory(userStoryEvent);
 		}
 		
 	}

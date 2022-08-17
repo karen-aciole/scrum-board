@@ -6,6 +6,9 @@ import com.psoft.scrumboard.exception.*;
 import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Task;
 import com.psoft.scrumboard.model.UserStory;
+import com.psoft.scrumboard.model.event.UserStoryEvent;
+import com.psoft.scrumboard.repository.observer.UserStorySource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +18,13 @@ public class TaskService {
 
     @Autowired
     private UserStoryService userStoryService;
+    
     @Autowired
     private ProjetoService projetoService;
+    
+    @Autowired
+    private UserStorySource userStorySource;
+    
     public int criaTask(TaskDTO taskDTO) throws TaskAlreadyExistsException, UserStoryNotFoundException, UsuarioNotAllowedException {
 
         Task task = new Task(taskDTO.getTitulo(), taskDTO.getDescricao(), taskDTO.getUserStoryID());
@@ -125,6 +133,7 @@ public class TaskService {
         }
 
         task.setStatus();
+        this.userStorySource.marcouTaskRealizada(taskId, task.getStatus());
 
         return "Status alterado com sucesso";
     }
