@@ -188,21 +188,4 @@ public class UserStoryController {
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/userstory/inscricao-usuario", method = RequestMethod.POST)
-    public ResponseEntity<?> inscreveUsuarioUserStory(@RequestBody MudaStatusDTO inscricaoDTO) {
-    	String info;
-    	
-    	try {
-    		info = this.userStoryService.addInscricaoUsuario(inscricaoDTO);
-    	} catch (ProjetoNotFoundException e) {
-            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - id inválido.", HttpStatus.CONFLICT);
-        } catch (UserStoryNotFoundException e) {
-            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
-        } catch (UsuarioNotFoundException e) {
-            return new ResponseEntity<String>("Usuário não é integrante deste projeto.", HttpStatus.CONFLICT);
-        }
-    	
-    	return new ResponseEntity<>(info, HttpStatus.OK);
-    }
-
 }
