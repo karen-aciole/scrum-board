@@ -21,60 +21,70 @@ public class UserStoryController {
     private UserStoryService userStoryService;
 
     @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
-    public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
+    public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestParam String username, @RequestBody UserStoryDTO userStoryDTO) {
         String titulo;
 
         try {
-            titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO);
-        } catch (ProjetoNotFoundException e) {
+            titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO, username);
+        }catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryAlreadyExistsException e) {
-            return new ResponseEntity<String>("UserStory já cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory já cadastrada no projeto - número não disponível", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Usuário não tem permissão para criar UserStory.", HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @PathVariable Integer idUserStory) {
+    public ResponseEntity<?> acessaInfoUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestParam String username) {
         String info;
 
         try {
-            info = this.userStoryService.getInfoUserStory(projectKey, idUserStory);
-        } catch (ProjetoNotFoundException e) {
+            info = this.userStoryService.getInfoUserStory(projectKey, idUserStory, username);
+        }catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
-            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Usuário não tem permissão para visualizar esta UserStory.", HttpStatus.FORBIDDEN);
         }
+
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> removeUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory) {
+    public ResponseEntity<?> removeUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestParam String username) {
         String info;
 
         try {
-            info = this.userStoryService.deletaUserStory(projectKey, idUserStory);
-        } catch (ProjetoNotFoundException e) {
+            info = this.userStoryService.deletaUserStory(projectKey, idUserStory, username);
+        }catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
-            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Usuário não tem permissão para remover esta UserStory.", HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.PUT)
-    public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
+    @RequestMapping(value = "/userstory/{projectKey}/", method = RequestMethod.PUT)
+    public ResponseEntity<?> atualizaUserStory(@PathVariable Integer projectKey, @RequestParam String username, @RequestBody UserStoryDTO userStoryDTO) {
         String info;
 
         try {
-            info = this.userStoryService.updateInfoUserStory(projectKey, userStoryDTO);
+            info = this.userStoryService.updateInfoUserStory(projectKey, username, userStoryDTO);
+        }catch (ProjetoNotFoundException e) {
+            return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Usuário não tem permissão para alterar esta UserStory.", HttpStatus.FORBIDDEN);
         }
-
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
     
