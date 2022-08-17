@@ -34,11 +34,11 @@ public class NotificacaoController {
     }
     
     @RequestMapping(value = "/notificacao/scrum-master", method = RequestMethod.PUT)
-    public ResponseEntity<?> notificaScrumMasterUserStory(@RequestBody MudaStatusDTO inscricaoDTO) {
+    public ResponseEntity<?> notificaScrumMasterUserStory(@RequestParam Integer projectKey, @RequestParam String username) {
     	String info;
     	
     	try {
-    		info = this.notificacaoService.addInscricaoScrumMaster(inscricaoDTO);
+    		info = this.notificacaoService.addInscricaoScrumMaster(projectKey, username);
     	} catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - id inválido.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
@@ -49,11 +49,11 @@ public class NotificacaoController {
     }
     
     @RequestMapping(value = "/notificacao/product-owner", method = RequestMethod.PUT)
-    public ResponseEntity<?> notificaProductOwnerUserStory(@RequestBody MudaStatusDTO inscricaoDTO) {
+    public ResponseEntity<?> notificaProductOwnerUserStory(@RequestParam Integer projectKey, @RequestParam String username) {
     	String info;
     	
     	try {
-    		info = this.notificacaoService.addInscricaoProductOwner(inscricaoDTO);
+    		info = this.notificacaoService.addInscricaoProductOwner(projectKey, username);
     	} catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - id inválido.", HttpStatus.CONFLICT);
         } catch (UsuarioNotFoundException e) {

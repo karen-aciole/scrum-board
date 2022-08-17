@@ -53,40 +53,40 @@ public class NotificacaoService {
     }
     
     
-    public String addInscricaoScrumMaster(MudaStatusDTO inscricaoDTO)
+    public String addInscricaoScrumMaster(Integer projectKey, String username)
     		throws ProjetoNotFoundException, UsuarioNotAllowedException {
     	
-    	if (!this.projetoRepository.containsProjectKey(inscricaoDTO.getProjectKey())) {
+    	if (!this.projetoRepository.containsProjectKey(projectKey)) {
     		throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
     	}
     	
-    	Projeto projeto = this.projetoRepository.getProjeto(inscricaoDTO.getProjectKey());
+    	Projeto projeto = this.projetoRepository.getProjeto(projectKey);
     	
-    	if (!(projeto.getScrumMaster().getUsuario().getUsername().equals(inscricaoDTO.getUsername()))) {
+    	if (!(projeto.getScrumMaster().getUsuario().getUsername().equals(username))) {
     		throw new UsuarioNotAllowedException("O username informado não é do Scrum Master desse projeto.");
         }
         
-        UserStoryListener usuario = new ScrumMasterListener(inscricaoDTO.getUsername());
+        UserStoryListener usuario = new ScrumMasterListener(username);
         this.userStorySource.addListener(usuario);
     	
         return "Inscrição realizada!";
     }
     
-    public String addInscricaoProductOwner(MudaStatusDTO inscricaoDTO)
+    public String addInscricaoProductOwner(Integer projectKey, String username)
     		throws ProjetoNotFoundException, UsuarioNotFoundException {
     	
-    	if (!this.projetoRepository.containsProjectKey(inscricaoDTO.getProjectKey())) {
+    	if (!this.projetoRepository.containsProjectKey(projectKey)) {
     		throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
     	}
     	
-    	Projeto projeto = this.projetoRepository.getProjeto(inscricaoDTO.getProjectKey());
+    	Projeto projeto = this.projetoRepository.getProjeto(projectKey);
     	
-    	if (!(projeto.contemIntegrante(inscricaoDTO.getUsername())
-    			|| projeto.getIntegranteRepository().getIntegrante(inscricaoDTO.getUsername()).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER))) {
+    	if (!(projeto.contemIntegrante(username)
+    			|| projeto.getIntegranteRepository().getIntegrante(username).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER))) {
     		throw new UsuarioNotFoundException("Usuário não é Product Owner neste projeto.");
         }
         
-        UserStoryListener usuario = new ProductOwnerListener(inscricaoDTO.getUsername());
+        UserStoryListener usuario = new ProductOwnerListener(username);
         this.userStorySource.addListener(usuario);
     	
         return "Inscrição realizada!";
