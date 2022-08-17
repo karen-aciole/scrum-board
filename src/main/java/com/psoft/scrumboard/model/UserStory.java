@@ -5,6 +5,8 @@ import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
 import com.psoft.scrumboard.repository.IntegranteRepository;
 import com.psoft.scrumboard.repository.TaskRepository;
 
+import java.util.Collection;
+
 public class UserStory {
 	
     private Integer id;
@@ -59,10 +61,23 @@ public class UserStory {
         return tasks;
     }
 
+    private StringBuilder listaTasksFormatada() {
+        Collection<Task> listaDeTasks = this.getTasks().getAllTasksByIdUserStory(this.getId());
+        StringBuilder listaDeTasksFormatada = new StringBuilder();
+        for(Task task: listaDeTasks) {
+            listaDeTasksFormatada.append(task.getTitulo())
+                    .append(" - ").append(task.getDescricao())
+                    .append(" - ").append(task.getStatus())
+                    .append("\n");
+        }
+        return listaDeTasksFormatada;
+    }
+
     public String toString() {
         return "Informações da UserStory '" + this.titulo + "' - US" + this.getId() + "\n"
                 + "Descrição: " + this.getDescricao() + "\n"
-                + "Estágio de desenvolvimento: " + getEstagioDesenvolvimento();
+                + "Estágio de desenvolvimento: " + getEstagioDesenvolvimento() + "\n"
+                + "Tasks: \n" + this.listaTasksFormatada();
     }
 
     public void setTitulo(String titulo) {

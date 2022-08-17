@@ -1,5 +1,6 @@
 package com.psoft.scrumboard.service;
 
+import com.psoft.scrumboard.dto.MudaStatusDTO;
 import com.psoft.scrumboard.dto.MudaStatusTaskDTO;
 import com.psoft.scrumboard.dto.TaskDTO;
 import com.psoft.scrumboard.exception.*;
@@ -8,10 +9,17 @@ import com.psoft.scrumboard.model.Task;
 import com.psoft.scrumboard.model.UserStory;
 import com.psoft.scrumboard.model.event.UserStoryEvent;
 import com.psoft.scrumboard.repository.observer.UserStorySource;
+import com.psoft.scrumboard.model.enums.EstagioDesenvolvimentoEnum;
+import com.psoft.scrumboard.model.estagiodesenvolvimento.EstagioDesenvolvimento;
+import com.psoft.scrumboard.repository.EstagioDesenvolvimentoRepository;
+import com.psoft.scrumboard.repository.ProjetoRepository;
+import com.psoft.scrumboard.repository.TaskRepository;
+import com.psoft.scrumboard.repository.UserStoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Collection;
 
 @Service
 public class TaskService {
@@ -25,116 +33,133 @@ public class TaskService {
     @Autowired
     private UserStorySource userStorySource;
     
-    public int criaTask(TaskDTO taskDTO) throws TaskAlreadyExistsException, UserStoryNotFoundException, UsuarioNotAllowedException {
+    @Autowired
+    private ProjetoRepository projetoRepository;
+    
+    @Autowired
+    private UserStoryRepository userStoryRepository;
+    
+    @Autowired
+    private TaskRepository taskRepository;
+    
+    @Autowired
+    private EstagioDesenvolvimentoRepository estagioDesenvolvimentoRepository;
+    
+    public int criaTask(Integer projectKey, TaskDTO taskDTO) throws TaskAlreadyExistsException, UserStoryNotFoundException, UsuarioNotAllowedException {
 
-        Task task = new Task(taskDTO.getTitulo(), taskDTO.getDescricao(), taskDTO.getUserStoryID());
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(taskDTO.getUserStoryID());
-        UserStory us = getUs(taskDTO.getUserStoryID());
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory userStory = projeto.getUserStory(taskDTO.getUserStoryID());
 
-        if (us.equals(null)) {
+        if (userStory == null) {
             throw new UserStoryNotFoundException("US não está cadastrada no sistema - id inválido.");
-        }else if (!us.getResponsaveis().containsUsername(taskDTO.getUserName()) && !projeto.getScrumMaster().getUsuario().getUsername().equals(taskDTO.getUserName())) {
+        }else if (!userStory.getResponsaveis().containsUsername(taskDTO.getUserName()) && !projeto.getScrumMaster().getUsuario().getUsername().equals(taskDTO.getUserName())) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
 
-        int chave = projeto.getUserStory(taskDTO.getUserStoryID()).getTasks().addTask(task);
+        Task task = new Task(taskDTO.getTitulo(), taskDTO.getDescricao(), taskDTO.getUserStoryID());
 
-        return chave;
+        return userStory.getTasks().addTask(task);
     }
 
 
-    public String deletaTask(Integer taskId, Integer idUserStory, String userName) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
-        UserStory us = getUs(idUserStory);
-        Task task = getTask(taskId, idUserStory);
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(idUserStory);
+    public String deletaTask(Integer taskId, Integer idUserStory, String userName, Integer projectKey) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory userStory = projeto.getUserStory(idUserStory);
+        Task task = getTask(taskId, idUserStory, projectKey);
 
-        if (task.equals(null)) {
-            throw new TaskNotFoundException("Task não está cadastrada no sistema - id inválido.");
-        }else if (us.equals(null)) {
+        if (userStory == null) {
             throw new UserStoryNotFoundException("US não está cadastrada no sistema - id inválido.");
-        }else if (!us.getResponsaveis().containsUsername(userName) && !projeto.getScrumMaster().getUsuario().getUsername().equals(userName)) {
+        }else if (!userStory.getResponsaveis().containsUsername(userName) && !projeto.getScrumMaster().getUsuario().getUsername().equals(userName)) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
 
-        us.getTasks().delTask(taskId);
+        userStory.getTasks().delTask(taskId);
 
         return "Task deletada com sucesso";
     }
 
-    public String getInfoTask(Integer taskId, Integer idUserStory, String userName) throws TaskNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException {
-        UserStory us = getUs(idUserStory);
-        System.out.println(us.getTitulo());
-        Task task = getTask(taskId, idUserStory);
-        System.out.println(task.toString());
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(idUserStory);
-        System.out.println(projeto.getNome());
+    public String getInfoTask(Integer taskId, Integer idUserStory, String userName, Integer projectKey)
+            throws TaskNotFoundException, UserStoryNotFoundException, UsuarioNotAllowedException, ProjetoNotFoundException {
 
-        if (task.equals(null)) {
-            throw new TaskNotFoundException("Task não está cadastrada no sistema - id inválido.");
-        }else if (us.equals(null)) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory userStory = projeto.getUserStory(idUserStory);
+        Task task = getTask(taskId, idUserStory, projectKey);
+
+        if (projeto == null) {
+            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - id inválido.");
+        } else if (userStory == null) {
             throw new UserStoryNotFoundException("US não está cadastrada no sistema - id inválido.");
-        } else if (!us.getResponsaveis().containsUsername(userName) && !projeto.getScrumMaster().getUsuario().getUsername().equals(userName)) {
+        } else if (!userStory.getResponsaveis().containsUsername(userName) && !projeto.getScrumMaster().getUsuario().getUsername().equals(userName)) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
 
         return task.toString();
     }
 
-    public String updateInfoTask(Integer taskId, TaskDTO taskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
-        UserStory us = getUs(taskDTO.getUserStoryID());
-        Task task = us.getTasks().getTask(taskId);
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(taskDTO.getUserStoryID());
+    public String updateInfoTask(Integer taskId, Integer projectKey, TaskDTO taskDTO) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory userStory = projeto.getUserStory(taskDTO.getUserStoryID());
+        Task task = userStory.getTasks().getTask(taskId);
 
-        if (task.equals(null)) {
+        if (task == null) {
             throw new TaskNotFoundException("Task não está cadastrada no sistema - id inválido.");
-        }else if (us.equals(null)) {
-            throw new UserStoryNotFoundException("US não está cadastrada no sistema - id inválido.");
-        } else if (!us.getResponsaveis().containsUsername(taskDTO.getUserName()) && !projeto.getScrumMaster().getUsuario().getUsername().equals(taskDTO.getUserName())) {
+        }else if (!userStory.getResponsaveis().containsUsername(taskDTO.getUserName()) && !projeto.getScrumMaster().getUsuario().getUsername().equals(taskDTO.getUserName())) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
         }
 
-        task.setDescricao(taskDTO.getDescricao());
-        task.setTitulo(taskDTO.getTitulo());
+        task.setDescricao(!taskDTO.getDescricao().isBlank() ? taskDTO.getDescricao() : task.getDescricao());
+        task.setTitulo(!taskDTO.getTitulo().isBlank() ? taskDTO.getTitulo() : task.getTitulo());
 
-        return us.getTasks().getTask(taskId).toString();
+        return userStory.getTasks().getTask(taskId).toString();
     }
 
-    public UserStory getUs(Integer userStoryId) throws UserStoryNotFoundException {
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(userStoryId);
+    private Task getTask(Integer taskId, Integer userStoryId, Integer projetoKey) throws TaskNotFoundException {
+        Projeto projeto = this.projetoRepository.getProjeto(projetoKey);
+        UserStory userStory = projeto.getUserStory(userStoryId);
+        Task task = userStory.getTasks().getTask(taskId);
 
-        if (projeto.equals(null)) {
-            throw new UserStoryNotFoundException("US não está cadastrada no sistema - id inválido.");
-        }
-
-        UserStory us = projeto.getUserStory(userStoryId);
-
-        return us;
-    }
-
-    public Task getTask(Integer taskId, Integer userStoryId) throws UserStoryNotFoundException, TaskNotFoundException {
-        UserStory us = getUs(userStoryId);
-        Task task = us.getTasks().getTask(taskId);
-
-        if (task.equals(null)) {
+        if (task == null) {
             throw new TaskNotFoundException("Task não está cadastrada no sistema - id inválido.");
         }
 
         return task;
     }
 
-    public String mudaStatusTask(Integer taskId, Integer idUserStory, String userName) throws UserStoryNotFoundException, TaskNotFoundException, UsuarioNotAllowedException {
-        Task task = getTask(taskId, idUserStory);
-        UserStory us = getUs(idUserStory);
-        Projeto projeto = this.projetoService.encontraProjetoPorIDUserStory(idUserStory);
+    public String mudaStatusTask(MudaStatusTaskDTO mudaStatusTaskDTO, Integer projetoKey)
+            throws TaskNotFoundException, UsuarioNotAllowedException, ProjetoNotFoundException, StatusException, UserStoryNotFoundException, UsuarioNotFoundException {
+
+        Projeto projeto = this.projetoRepository.getProjeto(projetoKey);
+        UserStory userStory = projeto.getUserStory(mudaStatusTaskDTO.getIdUserStory());
+        Task task = getTask(mudaStatusTaskDTO.getTaskKey(), mudaStatusTaskDTO.getIdUserStory(), projetoKey);
         String scrumMasterName = projeto.getScrumMaster().getUsuario().getUsername();
 
-        if (!us.getResponsaveis().containsUsername(userName) && !scrumMasterName.equals(userName)) {
+        if (!userStory.getResponsaveis().containsUsername(mudaStatusTaskDTO.getUsername()) && !scrumMasterName.equals(mudaStatusTaskDTO.getUsername())) {
             throw new UsuarioNotAllowedException("Usuário especificado não pode realizar essa operação");
+        }
+        if (userStory.getEstagioDesenvolvimento().equals(EstagioDesenvolvimentoEnum.TO_DO)) {
+            return ("Não é possível finalizar task. Pois não há nenhum usuário atribuído a ela");
         }
 
         task.setStatus();
         this.userStorySource.marcouTaskRealizada(taskId, task.getStatus());
 
+        if (isAllTasksFinished(projetoKey, userStory.getId())) {
+            this.userStoryService.mudaStatusWorkInProgressParaToVerify(new MudaStatusDTO(projetoKey, mudaStatusTaskDTO.getIdUserStory(), mudaStatusTaskDTO.getUsername()));
+        }
+
         return "Status alterado com sucesso";
+    }
+
+    private boolean isAllTasksFinished(Integer projectKey, Integer idUserStory) {
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory userStory = projeto.getUserStory(idUserStory);
+        Collection<Task> listTasks = userStory.getTasks().getAllTasksByIdUserStory(idUserStory);
+
+        int tasksFinalizadas = 0;
+        for (Task task : listTasks)
+            if (task.getStatus().equals("Realizada"))
+                tasksFinalizadas++;
+
+        return tasksFinalizadas == listTasks.size();
     }
 }

@@ -1,12 +1,10 @@
 package com.psoft.scrumboard.repository;
 
-import com.psoft.scrumboard.model.Projeto;
 import com.psoft.scrumboard.model.Task;
+import com.psoft.scrumboard.model.UserStory;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Repository
 public class TaskRepository {
@@ -40,17 +38,19 @@ public class TaskRepository {
     }
 
     public Task getTask(Integer id) {
-        if(this.tasks.containsKey(id)){
-            return this.tasks.get(id);
-        } else {
-            return null;
-        }
-
+       return this.tasks.get(id);
     }
 
     public void delTask(Integer id) {
         this.tasks.remove(id);
     }
 
+    public Collection<Task> getAllTasksByIdUserStory(Integer idUserStory) {
+        Collection<Task> tasks = new ArrayList<>();
+        for (Task task: this.tasks.values())
+            if (task.getUserStoryID().equals(idUserStory))
+                tasks.add(task);
 
+        return tasks;
+    }
 }

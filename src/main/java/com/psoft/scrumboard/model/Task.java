@@ -26,7 +26,7 @@ public class Task {
     }
 
     public String getStatus(){
-        if(this.status == false){
+        if(!this.status){
             return "Não realizada";
         } else {
             return "Realizada";
@@ -38,7 +38,7 @@ public class Task {
     }
 
     public void setStatus() {
-        if(this.status == false){
+        if(!this.status){
             this.status = true;
         } else {
             this.status = false;
