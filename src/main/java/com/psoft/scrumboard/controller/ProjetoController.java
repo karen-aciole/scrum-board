@@ -6,9 +6,11 @@ import com.psoft.scrumboard.exception.ProjetoNotFoundException;
 import com.psoft.scrumboard.exception.UsuarioAlreadyExistsException;
 import com.psoft.scrumboard.exception.UsuarioNotAllowedException;
 import com.psoft.scrumboard.exception.UsuarioNotFoundException;
+import com.psoft.scrumboard.model.enums.PapelEnum;
 import com.psoft.scrumboard.service.ProjetoService;
 import com.psoft.scrumboard.service.UsuarioService;
 
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +41,12 @@ public class ProjetoController {
     }
 
     @RequestMapping(value = "/projeto/", method = RequestMethod.PUT)
-    public ResponseEntity<?> adicionaIntegrante(@RequestBody AdicionaIntegranteDTO adicionaIntegranteDTO) {
+    public ResponseEntity<?> adicionaIntegrante(
+            @ApiParam(value = "", required = true, allowableValues = "DESENVOLVEDOR, ESTAGIARIO, PESQUISADOR, PRODUCT_OWNER")
+            @RequestParam PapelEnum papel, @RequestParam String username, @RequestParam Integer projectKey, @RequestParam String scrumMaster) {
 
         try {
+            AdicionaIntegranteDTO adicionaIntegranteDTO = new AdicionaIntegranteDTO(projectKey, papel, username, scrumMaster);
             this.projetoService.adicionaIntegrante(adicionaIntegranteDTO);
         } catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não cadastrado no sistema - projectname invalido", HttpStatus.CONFLICT);
@@ -53,7 +58,7 @@ public class ProjetoController {
             return new ResponseEntity<String>("Scrum Master não pertence a esse projeto", HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity<String>("Integrante cadastrado com name '" + adicionaIntegranteDTO.getUserName() + "'", HttpStatus.CREATED);
+        return new ResponseEntity<String>("Integrante cadastrado com name '" + username + "'", HttpStatus.CREATED);
     }
 
 
