@@ -21,15 +21,17 @@ public class UserStoryController {
     private UserStoryService userStoryService;
 
     @RequestMapping(value = "/userstory/{projectKey}", method = RequestMethod.POST)
-    public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestBody UserStoryDTO userStoryDTO) {
+    public ResponseEntity<?> cadastraUserStory(@PathVariable Integer projectKey, @RequestParam String username, @RequestBody UserStoryDTO userStoryDTO) {
         String titulo;
 
         try {
-            titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO);
-        } catch (ProjetoNotFoundException e) {
+            titulo = this.userStoryService.criaUserStory(projectKey, userStoryDTO, username);
+        }catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryAlreadyExistsException e) {
-            return new ResponseEntity<String>("UserStory já cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory já cadastrada no projeto - número não disponível", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Usuário não tem permissão para criar UserStory.", HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<String>("UserStory cadastrada com título '" + titulo + "'.", HttpStatus.CREATED);

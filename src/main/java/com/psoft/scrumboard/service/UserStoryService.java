@@ -34,12 +34,22 @@ public class UserStoryService {
     @Autowired
     private ProjetoService projetoService;
 
-    public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO) throws UserStoryAlreadyExistsException, ProjetoNotFoundException {
+    public String criaUserStory(Integer projectKey, UserStoryDTO userStoryDTO, String username)
+            throws UserStoryAlreadyExistsException, ProjetoNotFoundException, UsuarioNotAllowedException {
 
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
             throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
         } else if (this.contemUserStory(projectKey, userStoryDTO.getId())) {
             throw new UserStoryAlreadyExistsException("UserStory já cadastrada no projeto - número não disponível");
+        } else if (!this.projetoService.contemIntegrante(projectKey, username)) {
+            throw new UsuarioNotAllowedException("Usuário não é integrante deste projeto.");
+        }
+
+        boolean scrumMaster = projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.SCRUM_MASTER);
+        boolean productOwner = projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER);
+
+        if (!(productOwner || scrumMaster)) {
+            throw new UsuarioNotAllowedException("Usuário não tem permissão para criar UserStory.");
         }
 
         EstagioDesenvolvimento estagioDesenvolvimento = this.estagioDesenvolvimentoRepository
