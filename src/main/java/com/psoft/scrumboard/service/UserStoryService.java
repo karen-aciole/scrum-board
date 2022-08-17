@@ -63,11 +63,24 @@ public class UserStoryService {
         return false;
     }
 
-    public String getInfoUserStory(Integer projectKey, Integer idUserStory) throws UserStoryNotFoundException, ProjetoNotFoundException {
+    public String getInfoUserStory(Integer projectKey, Integer idUserStory, String username)
+            throws UserStoryNotFoundException, ProjetoNotFoundException, UsuarioNotAllowedException {
+
         if (!this.projetoRepository.containsProjectKey(projectKey)) {
-            throw new ProjetoNotFoundException("Projeto não está cadastrado no sistema - nome inválido.");
-        } else if (!this.contemUserStory(projectKey, idUserStory)) {
+            throw new ProjetoNotFoundException("Projeto não cadastrado no sistema - nome inválido.");
+        } else if (!contemUserStory(projectKey, idUserStory)) {
             throw new UserStoryNotFoundException("UserStory não encontrada no projeto.");
+        } else if (!this.projetoService.contemIntegrante(projectKey, username)) {
+            throw new UsuarioNotAllowedException("Usuário não é integrante deste projeto.");
+        }
+
+        Projeto projeto = this.projetoRepository.getProjeto(projectKey);
+        UserStory us = projeto.getUserStoryRepository().getUserStory(idUserStory);
+        boolean scrumMaster = projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.SCRUM_MASTER);
+        boolean productOwner = projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER);
+
+        if (!(integranteParticipaDeUserStory(projectKey, idUserStory, username) || productOwner || scrumMaster)) {
+            throw new UsuarioNotAllowedException("Usuário não tem permissão para visualizar esta UserStory.");
         }
 
         return this.projetoRepository.getProjeto(projectKey).getUserStoryRepository().getUserStory(idUserStory).toString();
@@ -118,11 +131,11 @@ public class UserStoryService {
         boolean productOwner = projetoService.getIntegranteByUserName(projectKey, username).getPapel().getTipo().equals(PapelEnum.PRODUCT_OWNER);
 
         if (!(integranteParticipaDeUserStory(projectKey, idUserStory, username) || productOwner || scrumMaster)) {
-            throw new UsuarioNotAllowedException("Usuário não tem permissão para atualizar esta UserStory.");
+            throw new UsuarioNotAllowedException("Usuário não tem permissão para remover esta UserStory.");
         }
 
         UserStoryRepository userStories = this.projetoRepository.getProjeto(projectKey).getUserStoryRepository();
-        String titulo = userStories.getUserStory(idUserStory).getTitulo();
+        String titulo = us.getTitulo();
         userStories.delUserStory(idUserStory);
 
         return "UserStory com titulo '" + titulo + "' removida";

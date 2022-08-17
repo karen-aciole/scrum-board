@@ -36,16 +36,19 @@ public class UserStoryController {
     }
 
     @RequestMapping(value = "/userstory/{projectKey}/{idUserStory}", method = RequestMethod.GET)
-    public ResponseEntity<?> acessaInfoUserStory(@RequestParam Integer projectKey, @PathVariable Integer idUserStory) {
+    public ResponseEntity<?> acessaInfoUserStory(@PathVariable Integer projectKey, @PathVariable Integer idUserStory, @RequestParam String username) {
         String info;
 
         try {
-            info = this.userStoryService.getInfoUserStory(projectKey, idUserStory);
-        } catch (ProjetoNotFoundException e) {
+            info = this.userStoryService.getInfoUserStory(projectKey, idUserStory, username);
+        }catch (ProjetoNotFoundException e) {
             return new ResponseEntity<String>("Projeto não está cadastrado no sistema - nome inválido.", HttpStatus.CONFLICT);
         } catch (UserStoryNotFoundException e) {
-            return new ResponseEntity<String>("UserStory não encontrada no projeto.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
+        } catch (UsuarioNotAllowedException e) {
+            return new ResponseEntity<String>("Usuário não tem permissão para visualizar esta UserStory.", HttpStatus.FORBIDDEN);
         }
+
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
     }
@@ -61,7 +64,7 @@ public class UserStoryController {
         } catch (UserStoryNotFoundException e) {
             return new ResponseEntity<String>("UserStory não está cadastrada neste projeto.", HttpStatus.CONFLICT);
         } catch (UsuarioNotAllowedException e) {
-            return new ResponseEntity<String>("Usuário não tem permissão para alterar esta UserStory.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("Usuário não tem permissão para remover esta UserStory.", HttpStatus.FORBIDDEN);
         }
 
         return new ResponseEntity<String>(info, HttpStatus.OK);
